@@ -11,9 +11,17 @@ var HelloWorld = React.createClass({
   render: function(){
     return (
     	<div>
-	      	<Navbar username={this.state.username} userId={this.state.userId} />
-	      		Hello World!
-	        <LoginForm />
+    		<div className="container">
+    			<div className="center-container">
+    				<div className="center-container-content">
+						<h3>Welcome to Playur!</h3>
+						<p>Playur allows you to create a YouTube playlist that other people can add to!</p>
+						<p>Just create a room and give your friends the <i>key</i> and they can join!</p>
+						<p>Or join a room with a friends key!</p>
+			        	<CreateOrJoin />
+		        	</div>
+	        	</div>
+        	</div>
         </div>
     )
   }

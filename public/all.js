@@ -1,26 +1,42 @@
-var Navbar = React.createClass({
-	displayName:'Navbar',
-	login: function login(e) {
-		e.preventDefault();
-		
+var CreateOrJoin = React.createClass({
+	displayName:'CreateOrJoin',
+	getInitialState: function() {
+		return {
+			potentialChannel:'',
+			joiningKey:''
+		}
 	},
-	logout:function logout(e) {
+	componentDidMount: function() {
+		var self = this;
+		$.get('/create', function(data) {
+			var words = data.roomkey[0].map(function(word) {
+				return word.charAt(0).toUpperCase() + word.slice(1);
+			});
+
+			self.setState({potentialChannel:words.join().replace(/,/g, '')});
+		});
+	},
+	enteredKey: function(e) {
+		this.setState({joiningKey:e.target.value});
+	},
+	createRoom: function(e) {
 		e.preventDefault();
-		console.log('Logout ' + this.props.username);
+		console.log(this.state.potentialChannel);
+		$.post('/createRoom');
+	},
+	joinRoom: function(e) {
+		e.preventDefault();
+		var roomKey = this.state.joiningKey;
+		console.log(roomKey);
 	},
 	render: function() {
-		var username = this.props.username;
-		var loginOrOut = username.length === 0 ? React.createElement("li", null, React.createElement("a", {href: "login", onClick: this.login}, "Login")) : React.createElement("li", null, React.createElement("a", {href: "logout", onClick: this.logout}, "Logout"))
 		return (
-			React.createElement("nav", {className: "nav-top"}, 
-				React.createElement("div", {className: "container"}, 
-					React.createElement("ul", null, 
-						React.createElement("li", null, React.createElement("a", {href: "about"}, "About")), 
-						loginOrOut
-					)
+				React.createElement("div", null, 
+					React.createElement("a", {href: "/createRoom"}, "Create Room"), 
+					React.createElement("input", {value: this.state.joiningKey, onChange: this.enteredKey, type: "text"}), 
+					React.createElement("a", {href: "#", onClick: this.joinRoom}, "Join Room")
 				)
 			)
-		)
 	}
 });
 var LoginForm = React.createClass({
@@ -28,16 +44,12 @@ var LoginForm = React.createClass({
 	getInitialState: function (){
 		return {
 			roomkey:''
-		};
+		}
 	},
 	create: function create() {
-		var self = this;
 		$.get('/create', function(data) {
-			var words = data.roomkey[0].map(function(word) {
-				return word.charAt(0).toUpperCase() + word.slice(1);
-			});
-
-			self.setState({roomkey:words.join().replace(/,/g, '')});
+			var words = data.roomkey[0];
+			this.state.roomkey = words.join();
 		});
 	},
 	render: function() {
@@ -62,9 +74,17 @@ var HelloWorld = React.createClass({
   render: function(){
     return (
     	React.createElement("div", null, 
-	      	React.createElement(Navbar, {username: this.state.username, userId: this.state.userId}), 
-	      		"Hello World!", 
-	        React.createElement(LoginForm, null)
+    		React.createElement("div", {className: "container"}, 
+    			React.createElement("div", {className: "center-container"}, 
+    				React.createElement("div", {className: "center-container-content"}, 
+						React.createElement("h3", null, "Welcome to Playur!"), 
+						React.createElement("p", null, "Playur allows you to create a YouTube playlist that other people can add to!"), 
+						React.createElement("p", null, "Just create a room and give your friends the ", React.createElement("i", null, "key"), " and they can join!"), 
+						React.createElement("p", null, "Or join a room with a friends key!"), 
+			        	React.createElement(CreateOrJoin, null)
+		        	)
+	        	)
+        	)
         )
     )
   }

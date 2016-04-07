@@ -14,19 +14,27 @@ var handlebars = require('handlebars');
 var youtubeIframePlayer = require('youtube-iframe-player');
 var bodyParser = require('body-parser');
 var express = require('express');
+var redis = require('redis');
+var cookieParser = require('cookie-parser');
 // Creating the Web Server 
 var app = express();
+var redisClient = redis.createClient();
 // View 
 var home = require('./routes/home.js');
 var login = require('./routes/login.js');
 var create = require('./routes/create.js');
 var room = require('./routes/room.js');
+var createRoom = require('./routes/createRoom.js');
+var roomName = require('./routes/roomName.js');
 // Routes 
 app.get('/', home);
 app.get('/login', login);
 app.get('/create', create);
 app.get('/room', room);
+app.get('/room/:roomName', roomName);
+app.get('/createRoom', createRoom);
 app.use(bodyParser.json()); // support json encoded bodies
+app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/public'));
 

@@ -2,7 +2,7 @@ var LoginForm = React.createClass({
 	displayName:'LoginForm',
 	getInitialState: function (){
 		return {
-			this.state.roomkey:''
+			roomkey:''
 		}
 	},
 	create: function create() {

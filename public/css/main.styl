@@ -3,42 +3,67 @@ darkColor = #585858;
 
 body {
 	margin:0px;
+	// background-color:darkColor;
 }
 
 .container {
 	width:100%;
 	height:100%;
-}
-
-nav.nav-top {
-	width:100%;
-	background-color:darkColor;
-	.container {
-		width:980px;
+	position:absolute;
+	display:block;
+	
+	.center-container {
+		display:table;
+		width:300px;
+		height:100%;
 		margin:auto;
-		height:60px;
-		ul {
-			padding:0;
-			margin:0;
-			list-style:none;
-			float:right;
-			li {
-				display:inline-block;
-				
-				a {
-					color:white;
-					text-decoration:none;
-					display:block;
-					width:80px;
-					line-height:60px;
-					margin:auto;
-					text-align:center;
-				}
-				a:hover {
-					background-color:orange;
-					color:white;
-				}
-			}
+		
+		.center-container-content {
+			display:table-cell;
+			height:300px;
+			vertical-align:middle;
 		}
 	}
 }
+
+.dashboard {
+	width:100%;
+	height:100%;
+	position:absolute;
+	
+	.video-area {
+		display:inline-block;
+		float:left;
+		width:60%;
+		position:relative;
+		height:100%;
+	}
+	
+	.menu-area {
+		display:inline-block;
+		float:left;
+		width:40%;
+		position:relative;
+		height:100%;
+	}
+}
+
+
+.video-table {
+	display: table;
+    width: 300px;
+    height: 100%;
+    margin: auto;
+    
+    .video-container {
+    	display:table-cell;
+    	height:500px;
+    	vertical-align:middle;
+    }
+}
+
+
+
+
+
+
