@@ -12,6 +12,9 @@ var sourcemaps = require('gulp-sourcemaps');
 var stylus = require('gulp-stylus');
 var plumber = require('gulp-plumber');
 var order = require("gulp-order");
+var webpack = require('webpack-stream');
+var path = require('path');
+var browserify = require('gulp-browserify');
 
 var config = {
 	js:[
@@ -50,6 +53,35 @@ gulp.task('server', function() {
 	})
 });
 
+gulp.task('webpack', function() {
+	webpack({
+		entry: {
+			main:"./public/components/main.jsx",
+			dashboard:"./public/components/dashboard.jsx"
+		},
+		output:{
+			path: path.join(__dirname, "./public"),
+	        filename: "[name].entry.js"
+		},
+		module: {
+			loaders: [
+				{
+					test: /\.jsx$/,
+					exclude: /node_modules/,
+					loader:'babel-loader',
+					query: {
+			          presets: ['es2015', 'react']
+			        }
+				}
+			],
+		},
+		resolve: {
+		    // Allow require('./blah') to require blah.jsx
+		    extensions: ['', '.js', '.jsx']
+		},
+	});
+});
+
 gulp.task('compile-jsx', function() {
 	try {
 		for (var i = 0; i < config.js.length; i++) {
@@ -63,6 +95,9 @@ gulp.task('compile-jsx', function() {
 		    }))
 		    .pipe(concat(config.js[i].outputFile))
 		    .pipe(react())
+		    .pipe(browserify({
+			  insertGlobals : true
+			}))
 			.pipe(gulp.dest('public'));
 		}
 	} catch (ex) { }
@@ -86,7 +121,12 @@ gulp.task('compile-stylus', function() {
 });
 
 gulp.task('react-compile', function() {
-	gulp.watch('./public/components/**/*.jsx', ['compile-jsx']);
+	gulp.watch(['./public/components/**/*.jsx',
+	 './public/actions/**/*.js',
+	  './public/constants/**/*.js',
+	  './public/dispatcher/**/*.js',
+	  './public/stores/**/*.js'],
+	   ['compile-jsx']);
 });
 
 gulp.task('stylus-compile', function() {
