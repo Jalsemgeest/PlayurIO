@@ -48,3 +48,123 @@ body {
   height: 500px;
   vertical-align: middle;
 }
+.main_menu {
+  width: 90%;
+  height: 100%;
+}
+.main_menu ul.menu_tabs {
+  list-style: none;
+  padding: 0;
+  width: 100%;
+  margin: 0;
+  height: 50px;
+}
+.main_menu ul.menu_tabs li {
+  display: inline-block;
+  width: calc(100% / 3);
+  height: 50px;
+}
+.main_menu ul.menu_tabs li a {
+  text-decoration: none;
+  color: #000;
+  line-height: 50px;
+  text-align: center;
+  display: block;
+}
+.main_menu ul.menu_tabs li a.selected {
+  background-color: #808080;
+}
+.main_menu .menu_container {
+  width: 100%;
+  height: calc(100% - 50px);
+}
+.main_menu .menu_container .menu_content {
+  height: 100%;
+  width: 100%;
+}
+.main_menu .menu_container .menu_content input {
+  width: 100%;
+  height: 20px;
+}
+.main_menu .menu_container .menu_content input:focus {
+  outline: 0;
+}
+.main_menu .menu_container .menu_content .youtubeResults,
+.main_menu .menu_container .menu_content .playlist {
+  height: calc(100% - 20px);
+  overflow-y: scroll;
+}
+.main_menu .menu_container .menu_content .youtubeResults ul,
+.main_menu .menu_container .menu_content .playlist ul {
+  margin: 0;
+  list-style: none;
+  padding: 0;
+}
+.main_menu .menu_container .menu_content .youtubeResults ul li,
+.main_menu .menu_container .menu_content .playlist ul li {
+  height: 100px;
+  display: block;
+  position: relative;
+  margin-bottom: 10px;
+}
+.main_menu .menu_container .menu_content .youtubeResults ul li .image_box,
+.main_menu .menu_container .menu_content .playlist ul li .image_box {
+  width: 30%;
+  display: inline-block;
+  float: left;
+  height: 100px;
+}
+.main_menu .menu_container .menu_content .youtubeResults ul li .image_box img,
+.main_menu .menu_container .menu_content .playlist ul li .image_box img {
+  width: 100%;
+  height: 100%;
+}
+.main_menu .menu_container .menu_content .youtubeResults ul li .text_box,
+.main_menu .menu_container .menu_content .playlist ul li .text_box {
+  width: 70%;
+  display: inline-block;
+  float: left;
+  height: 100px;
+  position: relative;
+}
+.main_menu .menu_container .menu_content .youtubeResults ul li .text_box p,
+.main_menu .menu_container .menu_content .playlist ul li .text_box p {
+  display: inline-block;
+  float: left;
+  margin: 0;
+  padding: 5px;
+  width: 100%;
+}
+.main_menu .menu_container .menu_content .youtubeResults ul li .text_box a,
+.main_menu .menu_container .menu_content .playlist ul li .text_box a {
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+  left: 0px;
+  text-align: center;
+  color: #000;
+  background-color: #ff6300;
+  text-decoration: none;
+}
+.main_menu .menu_container .menu_content .youtubeResults ul li .text_box a:hover,
+.main_menu .menu_container .menu_content .playlist ul li .text_box a:hover {
+  -webkit-transition: 0.25s linear;
+  -moz-transition: 0.25s linear;
+  -o-transition: 0.25s linear;
+  transition: 0.25s linear;
+  background-color: rgba(255,99,0,0.8);
+  transform: translate(0px, -0.5px);
+  box-shadow: 1px 4px 3px -2px rgba(0,0,0,0.47);
+  color: #000;
+}
+.main_menu .menu_container .menu_content .youtubeResults ul li .text_box a.upVote,
+.main_menu .menu_container .menu_content .playlist ul li .text_box a.upVote {
+  width: 50%;
+  left: 0px;
+}
+.main_menu .menu_container .menu_content .youtubeResults ul li .text_box a.downVote,
+.main_menu .menu_container .menu_content .playlist ul li .text_box a.downVote {
+  width: 50%;
+  right: 0px;
+  left: initial;
+}

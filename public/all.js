@@ -1489,5 +1489,5 @@ var HelloWorld = React.createClass({
 });
 
 React.render(React.createElement(HelloWorld, null), document.getElementById('app'));
-}).call(this,require("b55mWE"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/fake_12b60d2d.js","/")
+}).call(this,require("b55mWE"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/fake_6512606c.js","/")
 },{"b55mWE":3,"buffer":2}]},{},[5])

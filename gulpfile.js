@@ -28,6 +28,11 @@ var config = {
 		},
 		{
 			files:[
+			"./public/components/song.jsx",
+			"./public/components/history.jsx",
+			"./public/components/playlist.jsx",
+			"./public/components/youtubesearch.jsx",
+			"./public/components/menuarea.jsx",
 			"./public/components/videoplayur.jsx",
 			"./public/components/dashboard.jsx"
 			],
@@ -53,34 +58,34 @@ gulp.task('server', function() {
 	})
 });
 
-gulp.task('webpack', function() {
-	webpack({
-		entry: {
-			main:"./public/components/main.jsx",
-			dashboard:"./public/components/dashboard.jsx"
-		},
-		output:{
-			path: path.join(__dirname, "./public"),
-	        filename: "[name].entry.js"
-		},
-		module: {
-			loaders: [
-				{
-					test: /\.jsx$/,
-					exclude: /node_modules/,
-					loader:'babel-loader',
-					query: {
-			          presets: ['es2015', 'react']
-			        }
-				}
-			],
-		},
-		resolve: {
-		    // Allow require('./blah') to require blah.jsx
-		    extensions: ['', '.js', '.jsx']
-		},
-	});
-});
+// gulp.task('webpack', function() {
+// 	webpack({
+// 		entry: {
+// 			main:"./public/components/main.jsx",
+// 			dashboard:"./public/components/dashboard.jsx"
+// 		},
+// 		output:{
+// 			path: path.join(__dirname, "./public"),
+// 	        filename: "[name].entry.js"
+// 		},
+// 		module: {
+// 			loaders: [
+// 				{
+// 					test: /\.jsx$/,
+// 					exclude: /node_modules/,
+// 					loader:'babel-loader',
+// 					query: {
+// 			          presets: ['es2015', 'react']
+// 			        }
+// 				}
+// 			],
+// 		},
+// 		resolve: {
+// 		    // Allow require('./blah') to require blah.jsx
+// 		    extensions: ['', '.js', '.jsx']
+// 		},
+// 	});
+// });
 
 gulp.task('compile-jsx', function() {
 	try {

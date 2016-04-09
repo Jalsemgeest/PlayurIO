@@ -1,4 +1,4 @@
-var SongStore = require('../stores/SongStore');
+var PlaylistStore = require('../stores/PlaylistStore');
 
 function getParameterByName(name, url) {
     if (!url) url = window.location.href;
@@ -9,6 +9,11 @@ function getParameterByName(name, url) {
     if (!results[2]) return '';
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
+
+function getSelectedTab() {
+	return PlaylistStore.getSelectedTab();
+}
+
 var Dashboard = React.createClass({
 	displayName:'Dashboard',
 	render: function() {
@@ -18,6 +23,8 @@ var Dashboard = React.createClass({
 						<VideoPlayur />
 					</div>
 					<div className="menu-area">
+						<MenuArea 
+							tab={getSelectedTab()}/>
 					</div>
 				</div>
 			)

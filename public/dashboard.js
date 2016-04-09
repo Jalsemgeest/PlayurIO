@@ -2102,33 +2102,292 @@ module.exports = Object.assign || function (target, source) {
 },{"b55mWE":7,"buffer":5}],11:[function(require,module,exports){
 (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
 var AppDispatcher = require('../dispatcher/AppDispatcher');
-var SongConstants = require('../constants/SongConstants');
+var PlaylistConstants = require('../constants/PlaylistConstants');
 
-var SongActions = {
+var PlaylistActions = {
 
   /**
    * @param  {song} song
    */
+  search: function(string) {
+    AppDispatcher.dispatch({
+      actionType: PlaylistConstants.SEARCH,
+      query: string
+    });
+  },
+  addSongById: function(id) {
+  	AppDispatcher.dispatch({
+  		actionType: PlaylistConstants.ADD_SONG_BY_ID,
+  		id: id
+  	});
+  },
   create: function(song) {
     AppDispatcher.dispatch({
-      actionType: SongConstants.SONG_CREATE,
+      actionType: PlaylistConstants.SONG_CREATE,
+      song: song
+    });
+  },
+  remove: function(song) {
+    AppDispatcher.dispatch({
+      actionType: PlaylistConstants.SONG_REMOVE,
       song: song
     });
   },
 
-  remove: function(song) {
-  	AppDispatcher.dispatch({
-  		actionType: SongConstants.SONG_REMOVE,
-  		song: song
-  	});
-  }
 };
 
-module.exports = SongActions;
-}).call(this,require("b55mWE"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../actions/SongActions.js","/../actions")
-},{"../constants/SongConstants":13,"../dispatcher/AppDispatcher":14,"b55mWE":7,"buffer":5}],12:[function(require,module,exports){
+module.exports = PlaylistActions;
+}).call(this,require("b55mWE"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../actions/PlaylistActions.js","/../actions")
+},{"../constants/PlaylistConstants":13,"../dispatcher/AppDispatcher":14,"b55mWE":7,"buffer":5}],12:[function(require,module,exports){
 (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-var SongActions = require('../actions/SongActions');
+var Song = React.createClass({
+	displayName:'Song',
+	render: function() {
+		var anchor = null;
+		if (this.props.onclick) {
+			anchor = React.createElement("div", null, React.createElement("a", {href: "#", "data-id": this.props.id, onClick: this.props.onclick}, "+"));
+		} else {
+			anchor = React.createElement("div", null, React.createElement("a", {className: "upVote", href: "#", "data-id": this.props.id, onClick: this.props.upVote}, "+"), React.createElement("a", {className: "downVote", href: "#", "data-id": this.props.id, onClick: this.props.downVote}, "-"));
+		}
+		return (
+				React.createElement("div", null, 
+					React.createElement("div", {className: "image_box"}, 
+						React.createElement("img", {className: "channel_thumbnail", src: this.props.image})
+					), 
+					React.createElement("div", {className: "text_box"}, 
+						React.createElement("p", {className: "channel_title"}, this.props.title), 
+						React.createElement("p", {className: "channel_name"}, this.props.channel), 
+						anchor
+					)
+				)
+			)
+	}
+});
+var PlaylistActions = require('../actions/PlaylistActions');
+
+var History = React.createClass({
+	displayName:'History',
+	render: function() {
+		var isVisible = {
+			display:'block'
+		}
+		if (this.props && this.props.selected !== 'history') {
+			isVisible.display = 'none';
+		}
+		return (
+				React.createElement("div", {style: isVisible, className: "menu_content"}, 
+					React.createElement("p", null, "History")
+				)
+			)
+	}
+});
+var PlaylistActions = require('../actions/PlaylistActions');
+
+function getPlaylist() {
+	return PlaylistStore.getAll();	
+}
+
+var Playlist = React.createClass({
+	displayName:'Playlist',
+	getInitialState: function() {
+		return {
+			playlist:[]
+		}
+	},
+	_onChange: function() {
+		this.setState({
+			playlist:getPlaylist()
+		});
+	},
+	componentDidMount: function() {
+		PlaylistStore.addChangeListener(this._onChange);
+	},
+	componentWillUnmount: function() {
+		PlaylistStore.removeChangeListener();
+	},
+	upVote:function(e) {
+
+	},
+	downVote:function(e) {
+
+	},
+	render: function() {
+		var isVisible = {
+			display:'block'
+		}
+		if (this.props && this.props.selected !== 'playlist') {
+			isVisible.display = 'none';
+		}
+		var self = this;
+		var playlist = null;
+		if (this.state && this.state.playlist) {
+			playlist = this.state.playlist.map(function(item) {
+				var id = item.id;
+				return (React.createElement("li", null, 
+							React.createElement(Song, {image: item.img, 
+								title: item.title, 
+								channel: item.channel, 
+								id: id, 
+								voteUp: self.upVote, 
+								voteDown: self.downVote})
+					))
+			});
+		}
+		return (
+				React.createElement("div", null, 
+					React.createElement("div", {style: isVisible, className: "menu_content"}, 
+						React.createElement("p", null, "Playlist"), 
+						React.createElement("div", {className: "playlist"}, 
+							React.createElement("ul", null, 
+								playlist
+							)
+						)
+					)
+				)
+			)
+	}
+});
+var PlaylistActions = require('../actions/PlaylistActions');
+
+var ENTER_KEY = 13;
+
+function getResults() {
+	return PlaylistStore.getSearchResults();	
+}
+
+var YouTubeSearch = React.createClass({
+	displayName:'YouTubeSearch',
+	getInitialState: function() {
+		return {
+			search: '',
+			results:[]
+		}
+	},
+	searchChange: function(e) {
+		this.setState({
+			search:e.target.value
+		});
+	},
+	searchYouTube: function(e) {
+		if (e.which === ENTER_KEY) {
+			PlaylistActions.search(this.state.search);
+		}
+	},
+	_onChange: function() {
+		console.log("CHANGED");
+		this.setState({
+			results:getResults()
+		});
+	},
+	componentDidMount: function() {
+		PlaylistStore.addChangeListener(this._onChange);
+	},
+	componentWillUnmount: function() {
+		PlaylistStore.removeChangeListener();
+	},
+	addSong:function(e) {
+		e.preventDefault();
+		if (e.target && e.target.dataset && e.target.dataset.id) {
+			PlaylistActions.addSongById(e.target.dataset.id);
+		}
+	},
+	render: function() {
+		var isVisible = {
+			display:'block'
+		}
+		if (this.props && this.props.selected !== 'youtube') {
+			isVisible.display = 'none';
+		}
+		var searchResults = null;
+		var self = this;
+		if (this.state && this.state.results && this.state.results.length > 0) {
+			searchResults = this.state.results.map(function(item) {
+				var id = item.id.videoId;
+				return (React.createElement("li", null, 
+							React.createElement(Song, {image: item.snippet.thumbnails.default.url, 
+								title: item.snippet.title, 
+								channel: item.snippet.channelTitle, 
+								id: id, 
+								onclick: self.addSong})
+						))
+
+			});
+		}
+		return (
+				React.createElement("div", {style: isVisible, className: "menu_content"}, 
+					React.createElement("input", {type: "text", 
+						value: this.state.search, 
+						onChange: this.searchChange, 
+						onKeyUp: this.searchYouTube}), 
+					React.createElement("div", {className: "youtubeResults"}, 
+						React.createElement("ul", null, 
+							searchResults
+						)
+					)
+				)
+			)
+	}
+});
+var PlaylistActions = require('../actions/PlaylistActions');
+
+function getPlaylist() {
+	return PlaylistStore.getAll()
+}
+
+function getTabs() {
+	return [
+		"youtube",
+		"playlist",
+		"history"
+		]
+}
+
+var MenuArea = React.createClass({
+	displayName:'MenuArea',
+	getInitialState: function() {
+		return {
+			tab: 'playlist',
+			playlist:getPlaylist()
+		}
+	},
+
+	changeTab: function(e) {
+		e.preventDefault();
+		this.setState({
+			tab:e.target.parentNode.id
+		});
+	},
+
+	render: function() {
+		var self = this;
+		var tabs = getTabs().map(function(val) {
+			var isSelected = "";
+			if (self.state && self.state.tab === val || (self.props.tab === val && !self.state.tab)) {
+				isSelected = "selected";
+			}
+			return (React.createElement("li", {id: val}, React.createElement("a", {className: isSelected, ref: val, href: "#", onClick: self.changeTab}, val)))
+		});
+		var selectedTab = this.props.tab;
+		if (this.state && this.state.tab) {
+			selectedTab = this.state.tab;
+		}
+
+		return (
+				React.createElement("div", {className: "main_menu"}, 
+					React.createElement("ul", {className: "menu_tabs"}, 
+						tabs
+					), 
+					React.createElement("div", {className: "menu_container"}, 
+						React.createElement(YouTubeSearch, {selected: selectedTab}), 
+						React.createElement(Playlist, {selected: selectedTab}), 
+						React.createElement(History, {selected: selectedTab})
+					)
+				)
+			)
+	}
+});
+
+var PlaylistActions = require('../actions/PlaylistActions');
 
 function getDefaultVideo() {
 	return {
@@ -2140,7 +2399,7 @@ function getDefaultVideo() {
 
 function getSongs() {
 	return {
-		songs:SongStore.getAll()
+		songs:PlaylistStore.getAll()
 	}
 }
 
@@ -2165,8 +2424,8 @@ var VideoPlayur = React.createClass({
 		this.setState(getSongs());
 	},
 	componentDidMount: function() {
-		SongStore.addChangeListener(this._onChange);
-		SongActions.create(getDefaultVideo());
+		PlaylistStore.addChangeListener(this._onChange);
+		PlaylistActions.create(getDefaultVideo());
 		var self = this;
 	    var firstScriptTag = document.getElementsByTagName('script')[0];
 	    if (firstScriptTag.src !== "https://www.youtube.com/iframe_api") {
@@ -2182,15 +2441,18 @@ var VideoPlayur = React.createClass({
 	},
 
 	YouTubeReady: function() {
-		this.state.player = new YT.Player('player', {
-			playerVars: { 'rel': 0 },
-	        width: 300,
-	        height: 200,
-	        events: {
-	            'onReady': onPlayerReady,
-	            'onStateChange': onPlayerStateChange
-	        }
+		this.setState({
+			player: new YT.Player('player', {
+				playerVars: { 'rel': 0 },
+		        width: 300,
+		        height: 200,
+		        events: {
+		            'onReady': onPlayerReady,
+		            'onStateChange': onPlayerStateChange
+		        }
+			})
 		});
+		PlaylistStore.setVideoPlayer(this.state.player);
 	},
 
 	playurStateChange: function(event) {
@@ -2224,7 +2486,7 @@ var VideoPlayur = React.createClass({
 			)
 	}
 });
-var SongStore = require('../stores/SongStore');
+var PlaylistStore = require('../stores/PlaylistStore');
 
 function getParameterByName(name, url) {
     if (!url) url = window.location.href;
@@ -2235,6 +2497,11 @@ function getParameterByName(name, url) {
     if (!results[2]) return '';
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
+
+function getSelectedTab() {
+	return PlaylistStore.getSelectedTab();
+}
+
 var Dashboard = React.createClass({
 	displayName:'Dashboard',
 	render: function() {
@@ -2243,7 +2510,9 @@ var Dashboard = React.createClass({
 					React.createElement("div", {className: "video-area"}, 
 						React.createElement(VideoPlayur, null)
 					), 
-					React.createElement("div", {className: "menu-area"}
+					React.createElement("div", {className: "menu-area"}, 
+						React.createElement(MenuArea, {
+							tab: getSelectedTab()})
 					)
 				)
 			)
@@ -2251,16 +2520,18 @@ var Dashboard = React.createClass({
 });
 
 React.render(React.createElement(Dashboard, null), document.getElementById('app'));
-}).call(this,require("b55mWE"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/fake_b583484b.js","/")
-},{"../actions/SongActions":11,"../stores/SongStore":15,"b55mWE":7,"buffer":5}],13:[function(require,module,exports){
+}).call(this,require("b55mWE"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/fake_893ed62e.js","/")
+},{"../actions/PlaylistActions":11,"../stores/PlaylistStore":15,"b55mWE":7,"buffer":5}],13:[function(require,module,exports){
 (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
 var keyMirror = require('keymirror');
 
 module.exports = keyMirror({
+  SEARCH: null,
+  ADD_SONG_BY_ID: null,
   SONG_CREATE: null,
   SONG_REMOVE: null
 });
-}).call(this,require("b55mWE"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../constants/SongConstants.js","/../constants")
+}).call(this,require("b55mWE"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../constants/PlaylistConstants.js","/../constants")
 },{"b55mWE":7,"buffer":5,"keymirror":9}],14:[function(require,module,exports){
 (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
 var Dispatcher = require('flux').Dispatcher;
@@ -2272,49 +2543,122 @@ module.exports = new Dispatcher();
 var AppDispatcher = require('../dispatcher/AppDispatcher');
 var EventEmitter = require('events').EventEmitter;
 var assign = require('object-assign');
-var SongConstants = require('../constants/SongConstants');
+var PlaylistConstants = require('../constants/PlaylistConstants');
 
+// Playlist
+var _playlist = [];
+var _selectedTab = "playlist";
+var _searchResults = null;
+// Video Player
 var _songs = [];
 var _songIds = [];
+var _player = null;
+
+var youtubeApiKey = "AIzaSyDK5BdN8Xu3hMjhYBlhpPNHCejBQM-wOug";
 
 var CHANGE_EVENT = "change";
 
 function create(song) {
-	console.log(song);
-	if (song) {
-		if (song.id && _songIds.indexOf(song.id) === -1) {
-			_songIds.push(song.id);
-			_songs.push({
-				title:song.title,
-				id:song.id,
-				length:song.length
-			});
-		}
-	}
+  console.log(song);
+  if (song) {
+    if (song.id && _songIds.indexOf(song.id) === -1) {
+      _songIds.push(song.id);
+      _songs.push({
+        title:song.title,
+        id:song.id,
+        length:song.length
+      });
+    }
+  }
 }
 
 function remove(song) {
-	if (song) {
-		if (song.id && _songIds.indexOf(song.id) !== -1) {
-			_songIds.splice(_songIds.indexOf(song.id), 1);
-			for (var i = 0; i < _songs.length; i++) {
-				if (songs[i].id === song.id) {
-					_songs.splice(i, 1);
-					break;
-				}
-			}
-		}
+  if (song) {
+    if (song.id && _songIds.indexOf(song.id) !== -1) {
+      _songIds.splice(_songIds.indexOf(song.id), 1);
+      for (var i = 0; i < _songs.length; i++) {
+        if (songs[i].id === song.id) {
+          _songs.splice(i, 1);
+          break;
+        }
+      }
+    }
+  }
+}
+
+function search(query, callback) {
+	if (query) {
+		var url = 'https://www.googleapis.com/youtube/v3/search?part=snippet&q=' + encodeURIComponent(query) + '&type=video&maxResults=20&category=music&key=' + youtubeApiKey;
+
+    var promise = $.get(url);
+
+    promise.done(function(data) {
+      callback(data);
+    });
+		
+    promise.fail(function(err) {
+      console.log(err);
+      callback(null);
+    });
+
+	} else {
+		callback(null);
 	}
 }
 
-var SongStore = assign({}, EventEmitter.prototype, {
+function addSongById(id, callback) {
+  if (id) {
+    var found = false;
+    for (var i = 0; i < _playlist.length; i++) {
+      if (_playlist[i].id === id) {
+        found = true;
+      }
+      break;
+    }
+    if (!found && _searchResults && _searchResults.length > 0) {
+      for (var i = 0; i < _searchResults.length; i++) {
+        if (_searchResults[i].id.videoId === id) {
+          _playlist.push({
+            title:_searchResults[i].snippet.title,
+            id:_searchResults[i].id.videoId,
+            img:_searchResults[i].snippet.thumbnails.default.url,
+            channel:_searchResults[i].snippet.channelTitle
+          });
+          callback(true);
+          return;
+        }
+      }
+    }
+    callback(false);
+  } else {
+    callback(false);
+  }
+}
+
+var PlaylistStore = assign({}, EventEmitter.prototype, {
 
   /**
    * Get the entire collection of TODOs.
    * @return {object}
    */
   getAll: function() {
-    return _songs;
+    return _playlist;
+  },
+
+  getSelectedTab: function() {
+	  return _selectedTab;
+  },
+
+  getSearchResults: function() {
+    return _searchResults;
+  },
+
+  setVideoPlayer: function(player) {
+    _player = player;
+  },
+
+  setSelectedTab: function(tab) {
+    _selectedTab = tab;
   },
 
   emitChange: function() {
@@ -2341,25 +2685,44 @@ AppDispatcher.register(function(action) {
   var text;
 
   switch(action.actionType) {
-    case SongConstants.SONG_CREATE:
-      	if (action.song) {
-        	create(action.song);
-        	SongStore.emitChange();
+    case PlaylistConstants.SEARCH:
+      	if (action.query) {
+        	search(action.query, function(response) {
+            if (response.items) {
+              _searchResults = response.items;
+            }
+        		PlaylistStore.emitChange();
+        	});
       	}
       	break;
 
-    case SongConstants.SONG_REMOVE:
-    	if (action.song) {
-    		remove(song);
-    		SongStore.emitChange();
-    	}
-    	break;
+    case PlaylistConstants.ADD_SONG_BY_ID:
+      if (action.id) {
+        addSongById(action.id, function(wasSuccessful) {
+          PlaylistStore.emitChange();
+        });
+      }
+      break;
+
+    case PlaylistConstants.SONG_CREATE:
+        if (action.song) {
+          create(action.song);
+          PlaylistStore.emitChange();
+        }
+      break;
+
+    case PlaylistConstants.SONG_REMOVE:
+      if (action.song) {
+        remove(song);
+        PlaylistStore.emitChange();
+      }
+      break;
 
     default:
       // no op
   }
 });
 
-module.exports = SongStore;
-}).call(this,require("b55mWE"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../stores/SongStore.js","/../stores")
-},{"../constants/SongConstants":13,"../dispatcher/AppDispatcher":14,"b55mWE":7,"buffer":5,"events":6,"object-assign":10}]},{},[12])
+module.exports = PlaylistStore;
+}).call(this,require("b55mWE"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../stores/PlaylistStore.js","/../stores")
+},{"../constants/PlaylistConstants":13,"../dispatcher/AppDispatcher":14,"b55mWE":7,"buffer":5,"events":6,"object-assign":10}]},{},[12])

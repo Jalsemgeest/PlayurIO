@@ -1,4 +1,4 @@
-var SongActions = require('../actions/SongActions');
+var PlaylistActions = require('../actions/PlaylistActions');
 
 function getDefaultVideo() {
 	return {
@@ -10,7 +10,7 @@ function getDefaultVideo() {
 
 function getSongs() {
 	return {
-		songs:SongStore.getAll()
+		songs:PlaylistStore.getAll()
 	}
 }
 
@@ -35,8 +35,8 @@ var VideoPlayur = React.createClass({
 		this.setState(getSongs());
 	},
 	componentDidMount: function() {
-		SongStore.addChangeListener(this._onChange);
-		SongActions.create(getDefaultVideo());
+		PlaylistStore.addChangeListener(this._onChange);
+		PlaylistActions.create(getDefaultVideo());
 		var self = this;
 	    var firstScriptTag = document.getElementsByTagName('script')[0];
 	    if (firstScriptTag.src !== "https://www.youtube.com/iframe_api") {
@@ -52,15 +52,18 @@ var VideoPlayur = React.createClass({
 	},
 
 	YouTubeReady: function() {
-		this.state.player = new YT.Player('player', {
-			playerVars: { 'rel': 0 },
-	        width: 300,
-	        height: 200,
-	        events: {
-	            'onReady': onPlayerReady,
-	            'onStateChange': onPlayerStateChange
-	        }
+		this.setState({
+			player: new YT.Player('player', {
+				playerVars: { 'rel': 0 },
+		        width: 300,
+		        height: 200,
+		        events: {
+		            'onReady': onPlayerReady,
+		            'onStateChange': onPlayerStateChange
+		        }
+			})
 		});
+		PlaylistStore.setVideoPlayer(this.state.player);
 	},
 
 	playurStateChange: function(event) {
