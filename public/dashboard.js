@@ -2133,6 +2133,18 @@ var PlaylistActions = {
       song: song
     });
   },
+  getNextSong: function() {
+    AppDispatcher.dispatch({
+      actionType: PlaylistConstants.NEXT_SONG,
+      song: null
+    });
+  },
+  getCurrentPlaylist: function() {
+    AppDispatcher.dispatch({
+      actionType: PlaylistConstants.GET_CURRENT_PLAYLIST,
+      song: null
+    });
+  }
 
 };
 
@@ -2165,8 +2177,28 @@ var Song = React.createClass({
 });
 var PlaylistActions = require('../actions/PlaylistActions');
 
+function getHistory() {
+	return PlaylistStore.getHistory();	
+}
+
 var History = React.createClass({
 	displayName:'History',
+	getInitialState: function() {
+		return {
+			history:[]
+		}
+	},
+	_onChange: function() {
+		this.setState({
+			history:getHistory()
+		});
+	},
+	componentDidMount: function() {
+		PlaylistStore.addChangeListener(this._onChange);
+	},
+	componentWillUnmount: function() {
+		PlaylistStore.removeChangeListener();
+	},
 	render: function() {
 		var isVisible = {
 			display:'block'
@@ -2174,9 +2206,28 @@ var History = React.createClass({
 		if (this.props && this.props.selected !== 'history') {
 			isVisible.display = 'none';
 		}
+		var history = null;
+		if (this.state && this.state.history) {
+			playlist = this.state.history.map(function(item) {
+				var id = item.id;
+				return (React.createElement("li", null, 
+							React.createElement(Song, {image: item.img, 
+								title: item.title, 
+								channel: item.channel, 
+								id: id})
+					))
+			});
+		}
 		return (
-				React.createElement("div", {style: isVisible, className: "menu_content"}, 
-					React.createElement("p", null, "History")
+				React.createElement("div", null, 
+					React.createElement("div", {style: isVisible, className: "menu_content"}, 
+						React.createElement("p", null, "Playlist"), 
+						React.createElement("div", {className: "playlist"}, 
+							React.createElement("ul", null, 
+								playlist
+							)
+						)
+					)
 				)
 			)
 	}
@@ -2285,10 +2336,18 @@ var YouTubeSearch = React.createClass({
 	componentWillUnmount: function() {
 		PlaylistStore.removeChangeListener();
 	},
+	removeListItem: function(item) {
+		if (item.nodeName === "LI") {
+			item.remove();
+		} else {
+			this.removeListItem(item.parentNode);
+		}
+	},
 	addSong:function(e) {
 		e.preventDefault();
 		if (e.target && e.target.dataset && e.target.dataset.id) {
 			PlaylistActions.addSongById(e.target.dataset.id);
+			this.removeListItem(e.target);
 		}
 	},
 	render: function() {
@@ -2407,11 +2466,7 @@ var VideoPlayur = React.createClass({
 	displayName:'VideoPlayur',
 	getInitialState: function() {
 		return {
-			key:getParameterByName('auth'),
-			title:'',
-			id:'',
-			length:0,
-			player:null
+			songs:[]
 		}
 	},
 	startVideos: function() {
@@ -2421,11 +2476,13 @@ var VideoPlayur = React.createClass({
 		}
 	},
 	_onChange: function() {
-		this.setState(getSongs());
+		// if (this.state && this.state.player && this.state.player.getPlayerState() !== 2 && this.state.player.getPlayerState() !== 2) {
+			this.setState(getSongs());
+		// }
 	},
 	componentDidMount: function() {
 		PlaylistStore.addChangeListener(this._onChange);
-		PlaylistActions.create(getDefaultVideo());
+		PlaylistActions.getCurrentPlaylist();
 		var self = this;
 	    var firstScriptTag = document.getElementsByTagName('script')[0];
 	    if (firstScriptTag.src !== "https://www.youtube.com/iframe_api") {
@@ -2452,7 +2509,6 @@ var VideoPlayur = React.createClass({
 		        }
 			})
 		});
-		PlaylistStore.setVideoPlayer(this.state.player);
 	},
 
 	playurStateChange: function(event) {
@@ -2467,20 +2523,44 @@ var VideoPlayur = React.createClass({
 
 	    if (event.data == YT.PlayerState.ENDED) {
 			// socket.emit('change video')
+			PlaylistActions.getNextSong();
       	}
 	},
 
+	goToNextSong: function(e) {
+		e.preventDefault();
+
+		if (this.state && this.state.player) {
+			this.state.player.stopVideo();
+			this.state.player.clearVideo();
+			PlaylistActions.getNextSong();
+		}
+	},
+
 	playurReady: function(event) {
+		PlaylistStore.setVideoPlayer(this.state.player);
 		this.startVideos();
 
 		console.log("Ready");
 	},
 
 	render: function() {
+		if (this.state && this.state.player) {
+			if (typeof this.state.player.getPlayerState === "function") {
+				if (this.state.player.getPlayerState() !== 1 && this.state.player.getPlayerState() !== 2
+					|| this.state.songs[0].id !== this.state.player.getVideoData().video_id) {
+					var songs = this.state.songs;
+					if (songs && songs.length > 0) {
+						this.state.player.loadVideoById(songs[0].id);
+					}
+				}
+			}
+		}
 		return (
 				React.createElement("div", {className: "video-table"}, 
 					React.createElement("div", {className: "video-container"}, 
-						React.createElement("div", {id: "player"})
+						React.createElement("div", {id: "player"}), 
+						React.createElement("a", {className: "next_button", href: "#", onClick: this.goToNextSong}, "Next Song")
 					)
 				)
 			)
@@ -2520,7 +2600,7 @@ var Dashboard = React.createClass({
 });
 
 React.render(React.createElement(Dashboard, null), document.getElementById('app'));
-}).call(this,require("b55mWE"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/fake_893ed62e.js","/")
+}).call(this,require("b55mWE"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/fake_838eb669.js","/")
 },{"../actions/PlaylistActions":11,"../stores/PlaylistStore":15,"b55mWE":7,"buffer":5}],13:[function(require,module,exports){
 (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
 var keyMirror = require('keymirror');
@@ -2529,7 +2609,9 @@ module.exports = keyMirror({
   SEARCH: null,
   ADD_SONG_BY_ID: null,
   SONG_CREATE: null,
-  SONG_REMOVE: null
+  SONG_REMOVE: null,
+  NEXT_SONG: null,
+  GET_CURRENT_PLAYLIST:null
 });
 }).call(this,require("b55mWE"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../constants/PlaylistConstants.js","/../constants")
 },{"b55mWE":7,"buffer":5,"keymirror":9}],14:[function(require,module,exports){
@@ -2547,6 +2629,7 @@ var PlaylistConstants = require('../constants/PlaylistConstants');
 
 // Playlist
 var _playlist = [];
+var _history = [];
 var _selectedTab = "playlist";
 var _searchResults = null;
 // Video Player
@@ -2557,20 +2640,6 @@ var _player = null;
 var youtubeApiKey = "AIzaSyDK5BdN8Xu3hMjhYBlhpPNHCejBQM-wOug";
 
 var CHANGE_EVENT = "change";
-
-function create(song) {
-  console.log(song);
-  if (song) {
-    if (song.id && _songIds.indexOf(song.id) === -1) {
-      _songIds.push(song.id);
-      _songs.push({
-        title:song.title,
-        id:song.id,
-        length:song.length
-      });
-    }
-  }
-}
 
 function remove(song) {
   if (song) {
@@ -2618,13 +2687,35 @@ function addSongById(id, callback) {
     if (!found && _searchResults && _searchResults.length > 0) {
       for (var i = 0; i < _searchResults.length; i++) {
         if (_searchResults[i].id.videoId === id) {
-          _playlist.push({
+
+          var data = {
             title:_searchResults[i].snippet.title,
             id:_searchResults[i].id.videoId,
             img:_searchResults[i].snippet.thumbnails.default.url,
             channel:_searchResults[i].snippet.channelTitle
+          }
+
+          var promise = $.post("/playlist/addSong", data);
+
+          promise.done(function(data) {
+            if (!data.error) {
+              _playlist.push({
+                title:_searchResults[i].snippet.title,
+                id:_searchResults[i].id.videoId,
+                img:_searchResults[i].snippet.thumbnails.default.url,
+                channel:_searchResults[i].snippet.channelTitle
+              });
+              callback(true);
+            }
           });
-          callback(true);
+
+          promise.fail(function(err) {
+            console.log(err);
+            callback(false);
+          });
+
+          
+          
           return;
         }
       }
@@ -2633,6 +2724,43 @@ function addSongById(id, callback) {
   } else {
     callback(false);
   }
+}
+
+function getCurrentPlaylist(callback) {
+
+  var promise = $.get("/playlist/getPlaylist");
+
+  promise.done(function(playlist) {
+    if (!playlist.error) {
+      callback(playlist.map(function(song) { return JSON.parse(song) }));
+    }
+  });
+
+  promise.fail(function(err) {
+    console.log(err);
+    callback(false);
+  });
+
+}
+
+function playNextSong(callback) {
+
+  var promise = $.post("/playlist/playNextSong");
+
+  promise.done(function(playlist) {
+    if (!playlist.error) {
+      callback();
+    } else {
+      console.log(playlist.error);
+      callback();
+    }
+  });
+
+  promise.fail(function(err) {
+    console.log(err);
+    callback(false);
+  });
+
 }
 
 var PlaylistStore = assign({}, EventEmitter.prototype, {
@@ -2651,6 +2779,10 @@ var PlaylistStore = assign({}, EventEmitter.prototype, {
 
   getSearchResults: function() {
     return _searchResults;
+  },
+
+  getHistory: function() {
+    return _history;
   },
 
   setVideoPlayer: function(player) {
@@ -2706,7 +2838,7 @@ AppDispatcher.register(function(action) {
 
     case PlaylistConstants.SONG_CREATE:
         if (action.song) {
-          create(action.song);
+          // create(action.song);
           PlaylistStore.emitChange();
         }
       break;
@@ -2718,6 +2850,20 @@ AppDispatcher.register(function(action) {
       }
       break;
 
+    case PlaylistConstants.NEXT_SONG:
+      playNextSong(function() {
+        _history.push(_playlist.shift());
+        PlaylistStore.emitChange();
+      });
+      
+      break;
+
+    case PlaylistConstants.GET_CURRENT_PLAYLIST:
+      getCurrentPlaylist(function(playlist) {
+        _playlist = playlist;
+        PlaylistStore.emitChange();
+      });
+      break;
     default:
       // no op
   }

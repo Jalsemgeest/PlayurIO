@@ -1,4 +1,4 @@
-var bcrypt = require('bcrypt');
+var crypto = require('crypto');
 
 module.exports = {
 
@@ -8,27 +8,25 @@ module.exports = {
 	},
 
 	getUserKey: function(key, callback) {
-		bcrypt.hash(key, this.constants.saltRounds, function(err, hash) {
-			if (err) {
-				console.log("ERROR - Password hash failed.");
-				console.log(err);
-				callback('');
-			}
-		  	callback(hash.replace(/[^\w\s]/gi, ''));
-		});
+		var hash = crypto.createHmac('sha256', this.constants.secret)
+                   .update(key)
+                   .digest('hex');
+
+        callback(hash);
 	},
 
 	verifyHash: function(oldHash, room, callback) {
+		this.getUserKey(room, function(newHash) {
+			console.log("NEW vs OLD");
+			console.log(oldHash);
+			console.log(newHash);
 
-		callback(bcrypt.compareSync(room, oldHash));
-
-		// this.getUserKey(room, function(hash) {
-		// 	console.log(hash);
-		//     if (hash === oldHash) {
-		//     	callback(true);
-		//     }
-		//     callback(false);
-		// });
+			if (newHash === oldHash) {
+				callback(true);
+			} else {
+				callback(false);
+			}
+		});
 	}
 
 }

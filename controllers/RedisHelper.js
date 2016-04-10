@@ -5,9 +5,15 @@ module.exports = {
 	getBasics: function(userId) {
 		return {
 			created:Date.now(),
-			owner:userId,
-			songs:[]
+			owner:userId
 		}
+	},
+
+	deleteKey: function(key, callback) {
+		var client = redis.createClient();
+		client.del(key, function() {
+			callback();
+		});
 	},
 
 	// Callback is (err, reply)
@@ -23,8 +29,14 @@ module.exports = {
 
 	createPlaylist: function(key, hash, callback) {
 		var client = redis.createClient();
-		var str = this.getBasics(hash);
-		client.rpush([key, JSON.stringify(str)], callback);
+		var self = this;
+		this.deleteKey(key, function() {
+			var str = self.getBasics(hash);
+			self.deleteKey(key+"-RoomInfo", function() {
+				client.rpush([key+"-RoomInfo", JSON.stringify(str)], callback)
+				client.expire(key+"-RoomInfo", 86400);
+			});
+		});
 	},
 
 	initPlaylist: function(key, callback) {
@@ -38,7 +50,59 @@ module.exports = {
 				return null;
 			}
 		});
+	},
 
+	addToHistory: function(key, song, callback) {
+		var self = this;
+		var client = redis.createClient();
+		client.rpush([key, song], function(err, reply) {
+			callback();
+		});
+	},
+
+	addSong: function(key, song, callback) {
+		var self = this;
+		this.getAllFromKey(key, function(err, songs) {
+			if (songs.length <= 50) {
+				var found = false;
+				for (var i = 0; i < songs.length; i++) {
+					var songs = JSON.parse(songs[i]);
+					if (songs.id === song.id) {
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					var client = redis.createClient();
+					client.rpush([key, JSON.stringify(song)], function(err, reply) {
+						callback();
+					});
+				}
+			}
+		});
+	},
+
+	removeSong: function(key, song, callback) {
+		var self = this;
+		var client = redis.createClient();
+
+		client.lrem(key, 0, song, function(err, reply) {
+			callback();
+		});
+	},
+
+	nextSong: function(key, callback) {
+		var self = this;
+		this.getAllFromKey(key, function(err, songs) {
+			var oldSong = songs[0];
+			self.addToHistory(key+"-History", oldSong, function() {
+				self.removeSong(key, oldSong, function() {
+					self.getAllFromKey(key, function(err, songs) {
+						callback();
+					});
+				});
+			});
+		});
 	}
 
 	

@@ -30,6 +30,18 @@ var PlaylistActions = {
       song: song
     });
   },
+  getNextSong: function() {
+    AppDispatcher.dispatch({
+      actionType: PlaylistConstants.NEXT_SONG,
+      song: null
+    });
+  },
+  getCurrentPlaylist: function() {
+    AppDispatcher.dispatch({
+      actionType: PlaylistConstants.GET_CURRENT_PLAYLIST,
+      song: null
+    });
+  }
 
 };
 

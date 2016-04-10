@@ -72,7 +72,9 @@ router.get('/createRoom', function(req, res, next) {
 	attemptCreate(key, function(data) {
 		// console.log(data);
 		// console.log(req.cookies);
-		res.cookie('roomHash', data.hash, { maxAge: 900000, httpOnly: true });
+		console.log("COOKIE");
+		console.log(data.hash);
+		res.cookie('roomHash', data.hash, { maxAge: 86400000, httpOnly: true });
 		console.log("/room/"+data.key+"?auth=" + data.hash);
 		res.redirect("/room/"+data.key+"?auth=" + data.hash);
 		// next();

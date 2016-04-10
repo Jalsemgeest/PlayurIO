@@ -48,6 +48,26 @@ body {
   height: 500px;
   vertical-align: middle;
 }
+.video-table .video-container a.next_button {
+  width: 100%;
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  color: #000;
+  background-color: #ff6300;
+  position: relative;
+  top: -4px;
+}
+.video-table .video-container a:hover {
+  -webkit-transition: 0.25s linear;
+  -moz-transition: 0.25s linear;
+  -o-transition: 0.25s linear;
+  transition: 0.25s linear;
+  background-color: rgba(255,99,0,0.8);
+  transform: translate(0px, -0.5px);
+  box-shadow: 1px 4px 3px -2px rgba(0,0,0,0.47);
+  color: #000;
+}
 .main_menu {
   width: 90%;
   height: 100%;

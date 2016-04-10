@@ -5,6 +5,7 @@ var PlaylistConstants = require('../constants/PlaylistConstants');
 
 // Playlist
 var _playlist = [];
+var _history = [];
 var _selectedTab = "playlist";
 var _searchResults = null;
 // Video Player
@@ -15,20 +16,6 @@ var _player = null;
 var youtubeApiKey = "AIzaSyDK5BdN8Xu3hMjhYBlhpPNHCejBQM-wOug";
 
 var CHANGE_EVENT = "change";
-
-function create(song) {
-  console.log(song);
-  if (song) {
-    if (song.id && _songIds.indexOf(song.id) === -1) {
-      _songIds.push(song.id);
-      _songs.push({
-        title:song.title,
-        id:song.id,
-        length:song.length
-      });
-    }
-  }
-}
 
 function remove(song) {
   if (song) {
@@ -76,13 +63,35 @@ function addSongById(id, callback) {
     if (!found && _searchResults && _searchResults.length > 0) {
       for (var i = 0; i < _searchResults.length; i++) {
         if (_searchResults[i].id.videoId === id) {
-          _playlist.push({
+
+          var data = {
             title:_searchResults[i].snippet.title,
             id:_searchResults[i].id.videoId,
             img:_searchResults[i].snippet.thumbnails.default.url,
             channel:_searchResults[i].snippet.channelTitle
+          }
+
+          var promise = $.post("/playlist/addSong", data);
+
+          promise.done(function(data) {
+            if (!data.error) {
+              _playlist.push({
+                title:_searchResults[i].snippet.title,
+                id:_searchResults[i].id.videoId,
+                img:_searchResults[i].snippet.thumbnails.default.url,
+                channel:_searchResults[i].snippet.channelTitle
+              });
+              callback(true);
+            }
           });
-          callback(true);
+
+          promise.fail(function(err) {
+            console.log(err);
+            callback(false);
+          });
+
+          
+          
           return;
         }
       }
@@ -91,6 +100,43 @@ function addSongById(id, callback) {
   } else {
     callback(false);
   }
+}
+
+function getCurrentPlaylist(callback) {
+
+  var promise = $.get("/playlist/getPlaylist");
+
+  promise.done(function(playlist) {
+    if (!playlist.error) {
+      callback(playlist.map(function(song) { return JSON.parse(song) }));
+    }
+  });
+
+  promise.fail(function(err) {
+    console.log(err);
+    callback(false);
+  });
+
+}
+
+function playNextSong(callback) {
+
+  var promise = $.post("/playlist/playNextSong");
+
+  promise.done(function(playlist) {
+    if (!playlist.error) {
+      callback();
+    } else {
+      console.log(playlist.error);
+      callback();
+    }
+  });
+
+  promise.fail(function(err) {
+    console.log(err);
+    callback(false);
+  });
+
 }
 
 var PlaylistStore = assign({}, EventEmitter.prototype, {
@@ -109,6 +155,10 @@ var PlaylistStore = assign({}, EventEmitter.prototype, {
 
   getSearchResults: function() {
     return _searchResults;
+  },
+
+  getHistory: function() {
+    return _history;
   },
 
   setVideoPlayer: function(player) {
@@ -164,7 +214,7 @@ AppDispatcher.register(function(action) {
 
     case PlaylistConstants.SONG_CREATE:
         if (action.song) {
-          create(action.song);
+          // create(action.song);
           PlaylistStore.emitChange();
         }
       break;
@@ -176,6 +226,20 @@ AppDispatcher.register(function(action) {
       }
       break;
 
+    case PlaylistConstants.NEXT_SONG:
+      playNextSong(function() {
+        _history.push(_playlist.shift());
+        PlaylistStore.emitChange();
+      });
+      
+      break;
+
+    case PlaylistConstants.GET_CURRENT_PLAYLIST:
+      getCurrentPlaylist(function(playlist) {
+        _playlist = playlist;
+        PlaylistStore.emitChange();
+      });
+      break;
     default:
       // no op
   }

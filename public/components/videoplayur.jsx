@@ -18,11 +18,7 @@ var VideoPlayur = React.createClass({
 	displayName:'VideoPlayur',
 	getInitialState: function() {
 		return {
-			key:getParameterByName('auth'),
-			title:'',
-			id:'',
-			length:0,
-			player:null
+			songs:[]
 		}
 	},
 	startVideos: function() {
@@ -32,11 +28,13 @@ var VideoPlayur = React.createClass({
 		}
 	},
 	_onChange: function() {
-		this.setState(getSongs());
+		// if (this.state && this.state.player && this.state.player.getPlayerState() !== 2 && this.state.player.getPlayerState() !== 2) {
+			this.setState(getSongs());
+		// }
 	},
 	componentDidMount: function() {
 		PlaylistStore.addChangeListener(this._onChange);
-		PlaylistActions.create(getDefaultVideo());
+		PlaylistActions.getCurrentPlaylist();
 		var self = this;
 	    var firstScriptTag = document.getElementsByTagName('script')[0];
 	    if (firstScriptTag.src !== "https://www.youtube.com/iframe_api") {
@@ -63,7 +61,6 @@ var VideoPlayur = React.createClass({
 		        }
 			})
 		});
-		PlaylistStore.setVideoPlayer(this.state.player);
 	},
 
 	playurStateChange: function(event) {
@@ -78,20 +75,44 @@ var VideoPlayur = React.createClass({
 
 	    if (event.data == YT.PlayerState.ENDED) {
 			// socket.emit('change video')
+			PlaylistActions.getNextSong();
       	}
 	},
 
+	goToNextSong: function(e) {
+		e.preventDefault();
+
+		if (this.state && this.state.player) {
+			this.state.player.stopVideo();
+			this.state.player.clearVideo();
+			PlaylistActions.getNextSong();
+		}
+	},
+
 	playurReady: function(event) {
+		PlaylistStore.setVideoPlayer(this.state.player);
 		this.startVideos();
 
 		console.log("Ready");
 	},
 
 	render: function() {
+		if (this.state && this.state.player) {
+			if (typeof this.state.player.getPlayerState === "function") {
+				if (this.state.player.getPlayerState() !== 1 && this.state.player.getPlayerState() !== 2
+					|| this.state.songs[0].id !== this.state.player.getVideoData().video_id) {
+					var songs = this.state.songs;
+					if (songs && songs.length > 0) {
+						this.state.player.loadVideoById(songs[0].id);
+					}
+				}
+			}
+		}
 		return (
 				<div className="video-table">
 					<div className="video-container">
 						<div id="player"></div>
+						<a className="next_button" href="#" onClick={this.goToNextSong}>Next Song</a>
 					</div>
 				</div>
 			)

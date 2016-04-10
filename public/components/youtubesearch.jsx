@@ -36,10 +36,18 @@ var YouTubeSearch = React.createClass({
 	componentWillUnmount: function() {
 		PlaylistStore.removeChangeListener();
 	},
+	removeListItem: function(item) {
+		if (item.nodeName === "LI") {
+			item.remove();
+		} else {
+			this.removeListItem(item.parentNode);
+		}
+	},
 	addSong:function(e) {
 		e.preventDefault();
 		if (e.target && e.target.dataset && e.target.dataset.id) {
 			PlaylistActions.addSongById(e.target.dataset.id);
+			this.removeListItem(e.target);
 		}
 	},
 	render: function() {
