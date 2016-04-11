@@ -1404,35 +1404,15 @@ var CreateOrJoin = React.createClass({
 			joiningKey:''
 		}
 	},
-	componentDidMount: function() {
-		var self = this;
-		$.get('/create', function(data) {
-			var words = data.roomkey[0].map(function(word) {
-				return word.charAt(0).toUpperCase() + word.slice(1);
-			});
-
-			self.setState({potentialChannel:words.join().replace(/,/g, '')});
-		});
-	},
 	enteredKey: function(e) {
 		this.setState({joiningKey:e.target.value});
-	},
-	createRoom: function(e) {
-		e.preventDefault();
-		console.log(this.state.potentialChannel);
-		$.post('/createRoom');
-	},
-	joinRoom: function(e) {
-		e.preventDefault();
-		var roomKey = this.state.joiningKey;
-		console.log(roomKey);
 	},
 	render: function() {
 		return (
 				React.createElement("div", null, 
 					React.createElement("a", {href: "/createRoom"}, "Create Room"), 
 					React.createElement("input", {value: this.state.joiningKey, onChange: this.enteredKey, type: "text"}), 
-					React.createElement("a", {href: "#", onClick: this.joinRoom}, "Join Room")
+					React.createElement("a", {href: "/joinRoom?key="+ this.state.joiningKey}, "Join Room")
 				)
 			)
 	}
@@ -1489,5 +1469,5 @@ var HelloWorld = React.createClass({
 });
 
 React.render(React.createElement(HelloWorld, null), document.getElementById('app'));
-}).call(this,require("b55mWE"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/fake_956be3e0.js","/")
+}).call(this,require("b55mWE"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/fake_a216239e.js","/")
 },{"b55mWE":3,"buffer":2}]},{},[5])

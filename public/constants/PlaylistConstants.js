@@ -6,5 +6,7 @@ module.exports = keyMirror({
   SONG_CREATE: null,
   SONG_REMOVE: null,
   NEXT_SONG: null,
-  GET_CURRENT_PLAYLIST:null
+  GET_CURRENT_PLAYLIST:null,
+  UPVOTE:null,
+  DOWNVOTE:null
 });

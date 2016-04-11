@@ -68,7 +68,9 @@ function addSongById(id, callback) {
             title:_searchResults[i].snippet.title,
             id:_searchResults[i].id.videoId,
             img:_searchResults[i].snippet.thumbnails.default.url,
-            channel:_searchResults[i].snippet.channelTitle
+            channel:_searchResults[i].snippet.channelTitle,
+            upvotes:0,
+            downvotes:0
           }
 
           var promise = $.post("/playlist/addSong", data);
@@ -79,7 +81,9 @@ function addSongById(id, callback) {
                 title:_searchResults[i].snippet.title,
                 id:_searchResults[i].id.videoId,
                 img:_searchResults[i].snippet.thumbnails.default.url,
-                channel:_searchResults[i].snippet.channelTitle
+                channel:_searchResults[i].snippet.channelTitle,
+                upvotes:0,
+                downvotes:0
               });
               callback(true);
             }
@@ -137,6 +141,58 @@ function playNextSong(callback) {
     callback(false);
   });
 
+}
+
+function upvoteSong(songId, callback) {
+  var id = -1;
+  for (var i = 0; i < _playlist.length; i++) {
+    if (songId === _playlist[i].id) {
+      id = i;
+    }
+  }
+  var data = _playlist[id];
+
+  var promise = $.post('/playlist/upvote', data);
+
+  promise.done(function(playlist) {
+    if (!playlist.error) {
+      callback(playlist);
+    } else {
+      console.log(playlist.error);
+      callback();
+    }
+  });
+
+  promise.fail(function(err) {
+    console.log(err);
+    callback(false);
+  });
+}
+
+function downvoteSong(songId, callback) {
+  var id = -1;
+  for (var i = 0; i < _playlist.length; i++) {
+    if (songId === _playlist[i].id) {
+      id = i;
+    }
+  }
+  var data = _playlist[id];
+
+  var promise = $.post('/playlist/downvote', data);
+
+  promise.done(function(playlist) {
+    if (!playlist.error) {
+      callback(playlist);
+    } else {
+      console.log(playlist.error);
+      callback();
+    }
+  });
+
+  promise.fail(function(err) {
+    console.log(err);
+    callback(false);
+  });
 }
 
 var PlaylistStore = assign({}, EventEmitter.prototype, {
@@ -236,6 +292,20 @@ AppDispatcher.register(function(action) {
 
     case PlaylistConstants.GET_CURRENT_PLAYLIST:
       getCurrentPlaylist(function(playlist) {
+        _playlist = playlist;
+        PlaylistStore.emitChange();
+      });
+      break;
+
+    case PlaylistConstants.UPVOTE:
+      upvoteSong(action.songId, function(playlist) {
+        _playlist = playlist;
+        PlaylistStore.emitChange();
+      });
+      break;
+
+    case PlaylistConstants.DOWNVOTE:
+      downvoteSong(action.songId, function(playlist) {
         _playlist = playlist;
         PlaylistStore.emitChange();
       });

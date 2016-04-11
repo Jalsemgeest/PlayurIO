@@ -23,10 +23,14 @@ var Playlist = React.createClass({
 		PlaylistStore.removeChangeListener();
 	},
 	upVote:function(e) {
-
+		e.preventDefault();
+		var id = e.target.dataset['id'];
+		PlaylistActions.upvote(id);
 	},
 	downVote:function(e) {
-
+		e.preventDefault();
+		var id = e.target.dataset['id'];
+		PlaylistActions.downvote(id);
 	},
 	render: function() {
 		var isVisible = {
@@ -40,11 +44,12 @@ var Playlist = React.createClass({
 		if (this.state && this.state.playlist) {
 			playlist = this.state.playlist.map(function(item) {
 				var id = item.id;
-				return (<li>
+				return (<li key={id}>
 							<Song image={item.img}
 								title={item.title}
 								channel={item.channel}
 								id={id}
+								votes={item.votes}
 								voteUp={self.upVote}
 								voteDown={self.downVote} />
 					</li>)

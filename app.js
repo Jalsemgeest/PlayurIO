@@ -27,6 +27,8 @@ var room = require('./routes/room.js');
 var createRoom = require('./routes/createRoom.js');
 var roomName = require('./routes/roomName.js');
 var playlist = require('./routes/playlist.js');
+var joinRoom = require('./routes/joinRoom.js');
+var isHost = require('./routes/ishost.js');
 // Routes 
 app.get('/', home);
 app.get('/login', login);
@@ -36,6 +38,8 @@ app.get('/room/:roomName', roomName);
 app.post('/playlist/*', playlist);
 app.get('/playlist/*', playlist);
 app.get('/createRoom', createRoom);
+app.get('/joinRoom', joinRoom);
+app.get('/isHost', isHost);
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));

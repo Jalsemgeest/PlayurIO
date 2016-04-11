@@ -9,26 +9,56 @@ function getParameterByName(name, url) {
     if (!results[2]) return '';
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
-
+var ping = null;
 function getSelectedTab() {
 	return PlaylistStore.getSelectedTab();
 }
 
 var Dashboard = React.createClass({
 	displayName:'Dashboard',
+	getInitialState: function() {
+		return {
+			isHost:false
+		}
+	},
+	componentWillMount: function() {
+		var self = this;
+		$.get('/isHost', function(data) {
+			self.setState({
+				isHost:data.hosting
+			});
+		});
+	},
+	componentDidMount: function() {
+		ping = setInterval(function() {
+			PlaylistActions.getCurrentPlaylist();
+		}, 5000);
+	},
+	componentWillUnmount: function() {
+		if (ping) {
+			clearInterval(ping);
+		}
+	},
 	render: function() {
+
+		var hosting = null;
+		if (this.state.isHost) {
+			hosting = (<div className="video-area">
+						<VideoPlayur />
+					</div>);
+		}
+		var menuClass = this.state.isHost ? 'menu-area' : 'menu-area guest';
 		return (
 				<div className="dashboard">
-					<div className="video-area">
-						<VideoPlayur />
-					</div>
-					<div className="menu-area">
+					{hosting}
+					<div className={menuClass}>
 						<MenuArea 
-							tab={getSelectedTab()}/>
+							tab={getSelectedTab()}
+							isGuest={!this.state.isHost}/>
 					</div>
 				</div>
 			)
 	}
 });
 
-React.render(<Dashboard />, document.getElementById('app'));
+ReactDOM.render(<Dashboard />, document.getElementById('app'));

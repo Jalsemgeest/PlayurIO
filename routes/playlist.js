@@ -20,6 +20,7 @@ module.exports = (function() {
 			// console.log(req.param(data));
 			var song = req.body;
 			if (room !== '' && song) {
+				song.votes = [];
 				Redis.addSong(room, song, function() {
 					res.send({
 						success:'Song added successfully'
@@ -36,7 +37,9 @@ module.exports = (function() {
 		console.log(req.cookies);
 		var hash = req.cookies.roomHash;
 		var room = req.cookies.roomName;
+
 		if (hash) {
+			console.log("Hash is okay.");
 			// verifyHash: function(oldHash, room, callback)
 			Auth.verifyHash(hash, room, function(isValid) {
 				if (isValid) {
@@ -58,8 +61,12 @@ module.exports = (function() {
 
 	router.get('/playlist/getPlaylist', function(req, res) {
 		var room = req.cookies.roomName || '';
+		// console.log(room);
+		// console.log(req.cookies);
 		if (room !== '') {
 			Redis.getAllFromKey(room, function(err, reply) {
+				// console.log(err);
+				// console.log(reply);
 				res.send(reply);
 			});
 		} else {
@@ -68,6 +75,114 @@ module.exports = (function() {
 			});
 		}
 	});
+
+	router.post('/playlist/upvote', function(req, res) {
+		var room = req.cookies.roomName || '';
+		var voting = req.cookies[room+"-Voting"];
+		if (room !== '') {
+			Redis.getAllFromKey(room, function(err, reply) {
+				if (!err) {
+					var song = req.body;
+					console.log(reply);
+					var index = -1;
+					var songs = null;
+					for (var i = 0; i < reply.length; i++) {
+						songs = JSON.parse(reply[i]);
+						if (songs.id === song.id) {
+							index = i;
+							break;
+						}
+					}
+					var found = false;
+					for (var i = 0; i < songs.votes.length; i++) {
+						if (songs.votes[i].id === voting) {
+							if (songs.votes.vote === "up") {
+								found = true;
+							} else {
+								songs.votes.splice(i, 1);
+							}
+							break;
+						}
+					}
+					if (!found) {
+						// console.log("INDEX");
+						// console.log(index);
+						songs.votes.push({vote: 'up', id:voting});
+						Redis.setIndex(room, index, songs, function(err, reply) {
+							Redis.getAllFromKey(room, function(err, reply) {
+								console.log(reply);
+								res.send(reply);
+							});
+						});
+					} else {
+						res.send(reply);
+					}
+					
+				} else {
+					res.send({
+						error:"Failed to find room"
+					});
+				}
+			});
+		} else {
+			res.send({
+				error:'Invalid room name.'
+			});
+		}
+	});
+
+	router.post('/playlist/downvote', function(req, res) {
+		var room = req.cookies.roomName || '';
+		var voting = req.cookies[room+"-Voting"];
+		if (room !== '') {
+			Redis.getAllFromKey(room, function(err, reply) {
+				if (!err) {
+					console.log(reply);
+					var index = -1;
+					var song = req.body;
+					var songs = null;
+					for (var i = 0; i < reply.length; i++) {
+						songs = JSON.parse(reply[i]);
+						if (songs.id === song.id) {
+							index = i;
+							break;
+						}
+					}
+					var found = false;
+					for (var i = 0; i < songs.votes.length; i++) {
+						if (songs.votes[i].id === voting) {
+							if (songs.votes.vote === "down") {
+								found = true;
+							} else {
+								songs.votes.splice(i, 1);
+							}
+							break;
+						}
+					}
+					if (!found) {
+						songs.votes.push({vote: 'down', id:voting});
+						Redis.setIndex(room, index, songs, function(err, reply) {
+							Redis.getAllFromKey(room, function(err, reply) {
+								console.log(reply);
+								res.send(reply);
+							});
+						});
+					} else {
+						res.send(reply);
+					}
+					
+				} else {
+					res.send({
+						error:"Failed to find room"
+					});
+				}
+			});
+		} else {
+			res.send({
+				error:'Invalid room name.'
+			});
+		}
+	});	
 
 	
 	return router;

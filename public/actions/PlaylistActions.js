@@ -41,7 +41,20 @@ var PlaylistActions = {
       actionType: PlaylistConstants.GET_CURRENT_PLAYLIST,
       song: null
     });
+  },
+  upvote: function(id) {
+    AppDispatcher.dispatch({
+      actionType: PlaylistConstants.UPVOTE,
+      songId: id
+    });
+  },
+  downvote: function(id) {
+    AppDispatcher.dispatch({
+      actionType: PlaylistConstants.DOWNVOTE,
+      songId: id
+    });
   }
+
 
 };
 

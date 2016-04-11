@@ -1,4 +1,5 @@
 var crypto = require('crypto');
+var uuid = require('uuid');
 
 module.exports = {
 
@@ -27,6 +28,10 @@ module.exports = {
 				callback(false);
 			}
 		});
+	},
+
+	getUserUUID: function() {
+		return uuid.v1();
 	}
 
 }

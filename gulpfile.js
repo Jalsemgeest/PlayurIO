@@ -1,5 +1,6 @@
 'use strict';
 
+process.env.NODE_ENV = 'development';
 
 // Dependencies
 var gulp = require('gulp');

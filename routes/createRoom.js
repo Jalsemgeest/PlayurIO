@@ -74,6 +74,9 @@ router.get('/createRoom', function(req, res, next) {
 		// console.log(req.cookies);
 		console.log("COOKIE");
 		console.log(data.hash);
+		if (!req.cookies[key+'-Voting']) {
+			res.cookie(key+'-Voting', Auth.getUserUUID(), { maxAge: 86400000, httpOnly: true });
+		}
 		res.cookie('roomHash', data.hash, { maxAge: 86400000, httpOnly: true });
 		console.log("/room/"+data.key+"?auth=" + data.hash);
 		res.redirect("/room/"+data.key+"?auth=" + data.hash);

@@ -1,7 +1,7 @@
 var PlaylistActions = require('../actions/PlaylistActions');
 
 function getPlaylist() {
-	return PlaylistStore.getAll()
+	return PlaylistStore.getAll();
 }
 
 function getTabs() {
@@ -28,6 +28,12 @@ var MenuArea = React.createClass({
 		});
 	},
 
+	componentDidMount: function() {
+		if (this.props.isGuest) {
+			PlaylistActions.getCurrentPlaylist();
+		}
+	},
+
 	render: function() {
 		var self = this;
 		var tabs = getTabs().map(function(val) {
@@ -35,7 +41,7 @@ var MenuArea = React.createClass({
 			if (self.state && self.state.tab === val || (self.props.tab === val && !self.state.tab)) {
 				isSelected = "selected";
 			}
-			return (<li id={val} ><a className={isSelected} ref={val} href="#" onClick={self.changeTab} >{val}</a></li>)
+			return (<li key={val} id={val} ><a className={isSelected} ref={val} href="#" onClick={self.changeTab} >{val}</a></li>)
 		});
 		var selectedTab = this.props.tab;
 		if (this.state && this.state.tab) {

@@ -103,6 +103,12 @@ module.exports = {
 				});
 			});
 		});
+	},
+
+	setIndex: function(key, index, song, callback) {
+		var self = this;
+		var client = redis.createClient();
+		client.lset(key, index, JSON.stringify(song), callback);
 	}
 
 	
