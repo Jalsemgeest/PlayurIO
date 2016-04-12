@@ -4,11 +4,51 @@ var Auth = require('../controllers/Auth');
 var randomwords = require('random-words');
 var cookieParser = require('cookie-parser');
 var Redis = require('../controllers/RedisHelper');
+var Helper = require('../controllers/HelperFunctions');
 var bodyParser = require('body-parser');
 
-module.exports = (function() {
+module.exports = function(client) {
 'use strict';
-	
+	client.on('connection', function(socket) {
+		var room = Helper.getRoomCookie(socket.handshake.headers.cookie);
+		var hash = Helper.getHashCookie(socket.handshake.headers.cookie);
+		socket.join(room);
+
+		// Playlist request.
+		socket.on('request playlist', function() {
+			Redis.getAllFromKey(room, function(err, reply) {
+				socket.emit('playlist return', reply);
+			});
+		});	
+
+		socket.on('request next song', function() {
+			if (hash) {
+				Auth.verifyHash(hash, room, function(isValid) {
+					if (isValid) {
+						Redis.nextSong(room, function() {
+							socket.emit('next song return');
+							socket.to(room).emit('next song return');
+						});
+					}
+				});
+			}
+		});
+
+		socket.on('request add song', function(song) {
+			if (room !== '' && song) {
+				song.votes = [];
+				Redis.addSong(room, song, function(playlist) {
+					socket.emit('add song return', playlist);
+					socket.to(room).emit('add song return', playlist);
+				});
+			} else {
+				socket.emit('error');
+			}
+		});
+	});
+
+
+
 	var router = express.Router();
 
 	router.use(cookieParser());
@@ -187,4 +227,4 @@ module.exports = (function() {
 	
 	return router;
 
-})();
+};

@@ -25,7 +25,6 @@ var YouTubeSearch = React.createClass({
 		}
 	},
 	_onChange: function() {
-		console.log("CHANGED");
 		this.setState({
 			results:getResults()
 		});

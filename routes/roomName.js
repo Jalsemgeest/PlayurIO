@@ -4,6 +4,7 @@ var Auth = require('../controllers/Auth');
 var randomwords = require('random-words');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var roomName = '';
 module.exports = (function() {
 'use strict';
 	
@@ -16,7 +17,7 @@ module.exports = (function() {
 
 			console.log("BAM");
 			if (req.params.roomName) {
-
+				roomName = req.params.roomName;
 				res.cookie('roomName', req.params.roomName, { maxAge: 86400000, httpOnly: true });
 				res.sendFile(path.join(__dirname + '/../views/room.html'));
 

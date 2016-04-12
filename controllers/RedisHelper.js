@@ -63,6 +63,7 @@ module.exports = {
 	addSong: function(key, song, callback) {
 		var self = this;
 		this.getAllFromKey(key, function(err, songs) {
+			var toReturn = songs;
 			if (songs.length <= 50) {
 				var found = false;
 				for (var i = 0; i < songs.length; i++) {
@@ -75,7 +76,9 @@ module.exports = {
 				if (!found) {
 					var client = redis.createClient();
 					client.rpush([key, JSON.stringify(song)], function(err, reply) {
-						callback();
+						console.log(toReturn);
+						toReturn.push(JSON.stringify(song));
+						callback(toReturn);
 					});
 				}
 			}

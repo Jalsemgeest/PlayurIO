@@ -27,5 +27,25 @@ module.exports = {
         inYears: function(d1, d2) {
             return d2.getFullYear()-d1.getFullYear();
         }
+    },
+    getRoomCookie: function(str) {
+        if (str.indexOf('roomName') !== -1) {
+            var index = str.indexOf('roomName') + 9;
+            var newCookie = str.substring(index);
+            return newCookie;
+        }
+        return '';
+    },
+    getHashCookie: function(str) {
+        if (str.indexOf('roomHash') !== -1) {
+            var index = str.indexOf('roomHash') + 9;
+            var newCookie = str.substring(index);
+            if (newCookie.indexOf(' ') !== -1) {
+                index = newCookie.indexOf(' ');
+                newCookie = newCookie.substring(0, index-1);
+            } 
+            return newCookie;
+        }
+        return '';
     }
 }

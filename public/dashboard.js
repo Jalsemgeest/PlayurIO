@@ -2355,7 +2355,6 @@ var YouTubeSearch = React.createClass({
 		}
 	},
 	_onChange: function() {
-		console.log("CHANGED");
 		this.setState({
 			results:getResults()
 		});
@@ -2613,7 +2612,6 @@ function getParameterByName(name, url) {
     if (!results[2]) return '';
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
-var ping = null;
 function getSelectedTab() {
 	return PlaylistStore.getSelectedTab();
 }
@@ -2634,14 +2632,9 @@ var Dashboard = React.createClass({
 		});
 	},
 	componentDidMount: function() {
-		ping = setInterval(function() {
-			PlaylistActions.getCurrentPlaylist();
-		}, 5000);
+		
 	},
 	componentWillUnmount: function() {
-		if (ping) {
-			clearInterval(ping);
-		}
 	},
 	render: function() {
 
@@ -2666,7 +2659,7 @@ var Dashboard = React.createClass({
 });
 
 ReactDOM.render(React.createElement(Dashboard, null), document.getElementById('app'));
-}).call(this,require("b55mWE"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/fake_eed0c3b3.js","/")
+}).call(this,require("b55mWE"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/fake_f9945e7e.js","/")
 },{"../actions/PlaylistActions":11,"../stores/PlaylistStore":15,"b55mWE":7,"buffer":5}],13:[function(require,module,exports){
 (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
 var keyMirror = require('keymirror');
@@ -2694,6 +2687,8 @@ var AppDispatcher = require('../dispatcher/AppDispatcher');
 var EventEmitter = require('events').EventEmitter;
 var assign = require('object-assign');
 var PlaylistConstants = require('../constants/PlaylistConstants');
+
+var socket = io();
 
 // Playlist
 var _playlist = [];
@@ -2743,7 +2738,7 @@ function search(query, callback) {
 	}
 }
 
-function addSongById(id, callback) {
+function addSongById(id) {
   if (id) {
     var found = false;
     for (var i = 0; i < _playlist.length; i++) {
@@ -2755,8 +2750,7 @@ function addSongById(id, callback) {
     if (!found && _searchResults && _searchResults.length > 0) {
       for (var i = 0; i < _searchResults.length; i++) {
         if (_searchResults[i].id.videoId === id) {
-
-          var data = {
+          return data = {
             title:_searchResults[i].snippet.title,
             id:_searchResults[i].id.videoId,
             img:_searchResults[i].snippet.thumbnails.default.url,
@@ -2764,37 +2758,9 @@ function addSongById(id, callback) {
             upvotes:0,
             downvotes:0
           }
-
-          var promise = $.post("/playlist/addSong", data);
-
-          promise.done(function(data) {
-            if (!data.error) {
-              _playlist.push({
-                title:_searchResults[i].snippet.title,
-                id:_searchResults[i].id.videoId,
-                img:_searchResults[i].snippet.thumbnails.default.url,
-                channel:_searchResults[i].snippet.channelTitle,
-                upvotes:0,
-                downvotes:0
-              });
-              callback(true);
-            }
-          });
-
-          promise.fail(function(err) {
-            console.log(err);
-            callback(false);
-          });
-
-          
-          
-          return;
         }
       }
     }
-    callback(false);
-  } else {
-    callback(false);
   }
 }
 
@@ -2887,6 +2853,10 @@ function downvoteSong(songId, callback) {
   });
 }
 
+function parsePlaylist(playlist) {
+  return playlist.map(function(song) { return JSON.parse(song) });
+}
+
 var PlaylistStore = assign({}, EventEmitter.prototype, {
 
   /**
@@ -2954,9 +2924,7 @@ AppDispatcher.register(function(action) {
 
     case PlaylistConstants.ADD_SONG_BY_ID:
       if (action.id) {
-        addSongById(action.id, function(wasSuccessful) {
-          PlaylistStore.emitChange();
-        });
+        socket.emit('request add song', addSongById(action.id));
       }
       break;
 
@@ -2975,18 +2943,16 @@ AppDispatcher.register(function(action) {
       break;
 
     case PlaylistConstants.NEXT_SONG:
-      playNextSong(function() {
-        _history.push(_playlist.shift());
-        PlaylistStore.emitChange();
-      });
+      socket.emit('request next song');
+      // playNextSong(function() {
+      //   _history.push(_playlist.shift());
+      //   PlaylistStore.emitChange();
+      // });
       
       break;
 
     case PlaylistConstants.GET_CURRENT_PLAYLIST:
-      getCurrentPlaylist(function(playlist) {
-        _playlist = playlist;
-        PlaylistStore.emitChange();
-      });
+      socket.emit('request playlist');
       break;
 
     case PlaylistConstants.UPVOTE:
@@ -3005,6 +2971,21 @@ AppDispatcher.register(function(action) {
     default:
       // no op
   }
+});
+
+socket.on('add song return', function(data) {
+  _playlist = parsePlaylist(data);
+  PlaylistStore.emitChange();
+});
+
+socket.on('next song return', function() {
+  _history.push(_playlist.shift());
+  PlaylistStore.emitChange();
+});
+
+socket.on('playlist return', function(data) {
+  _playlist = parsePlaylist(data);
+  PlaylistStore.emitChange();
 });
 
 module.exports = PlaylistStore;

@@ -26,17 +26,27 @@ var create = require('./routes/create.js');
 var room = require('./routes/room.js');
 var createRoom = require('./routes/createRoom.js');
 var roomName = require('./routes/roomName.js');
-var playlist = require('./routes/playlist.js');
+// var playlist = require('./routes/playlist');
 var joinRoom = require('./routes/joinRoom.js');
 var isHost = require('./routes/ishost.js');
+
+
+var server = app.listen(3000, function () {
+	var host = server.address().address;
+	var port = server.address().port;
+	console.log('Example app listening at http://%s:%s', host, port);
+});
+
+var io = require("socket.io").listen(server);
+
 // Routes 
 app.get('/', home);
 app.get('/login', login);
 app.get('/create', create);
 app.get('/room', room);
 app.get('/room/:roomName', roomName);
-app.post('/playlist/*', playlist);
-app.get('/playlist/*', playlist);
+app.all('/playlist/*', require('./routes/playlist')(io));
+// app.get('/playlist/*', playlist);
 app.get('/createRoom', createRoom);
 app.get('/joinRoom', joinRoom);
 app.get('/isHost', isHost);
@@ -45,8 +55,3 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/public'));
 
-var server = app.listen(3000, function () {
-	var host = server.address().address;
-	var port = server.address().port;
-	console.log('Example app listening at http://%s:%s', host, port);
-});

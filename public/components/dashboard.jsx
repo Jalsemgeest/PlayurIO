@@ -9,7 +9,6 @@ function getParameterByName(name, url) {
     if (!results[2]) return '';
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
-var ping = null;
 function getSelectedTab() {
 	return PlaylistStore.getSelectedTab();
 }
@@ -30,14 +29,9 @@ var Dashboard = React.createClass({
 		});
 	},
 	componentDidMount: function() {
-		ping = setInterval(function() {
-			PlaylistActions.getCurrentPlaylist();
-		}, 5000);
+		
 	},
 	componentWillUnmount: function() {
-		if (ping) {
-			clearInterval(ping);
-		}
 	},
 	render: function() {
 
