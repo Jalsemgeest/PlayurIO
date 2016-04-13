@@ -47,5 +47,18 @@ module.exports = {
             return newCookie;
         }
         return '';
+    },
+
+    getUUID: function(str, room) {
+        var index = str.indexOf(room+'-Voting');
+        if (index !== -1) {
+            var newStr = str.substring(index);
+            index = newStr.indexOf('=');
+            newStr = newStr.substring(index+1);
+            index = newStr.indexOf(';');
+            newStr = newStr.substring(0, index);
+            return newStr;
+        }   
+        return '';
     }
 }

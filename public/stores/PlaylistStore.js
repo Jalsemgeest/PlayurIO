@@ -116,7 +116,7 @@ function playNextSong(callback) {
 
 }
 
-function upvoteSong(songId, callback) {
+function upvoteSong(songId) {
   var id = -1;
   for (var i = 0; i < _playlist.length; i++) {
     if (songId === _playlist[i].id) {
@@ -125,21 +125,23 @@ function upvoteSong(songId, callback) {
   }
   var data = _playlist[id];
 
-  var promise = $.post('/playlist/upvote', data);
+  socket.emit('request upvote song', data);
 
-  promise.done(function(playlist) {
-    if (!playlist.error) {
-      callback(playlist);
-    } else {
-      console.log(playlist.error);
-      callback();
-    }
-  });
+  // var promise = $.post('/playlist/upvote', data);
 
-  promise.fail(function(err) {
-    console.log(err);
-    callback(false);
-  });
+  // promise.done(function(playlist) {
+  //   if (!playlist.error) {
+  //     callback(playlist);
+  //   } else {
+  //     console.log(playlist.error);
+  //     callback();
+  //   }
+  // });
+
+  // promise.fail(function(err) {
+  //   console.log(err);
+  //   callback(false);
+  // });
 }
 
 function downvoteSong(songId, callback) {
@@ -151,21 +153,23 @@ function downvoteSong(songId, callback) {
   }
   var data = _playlist[id];
 
-  var promise = $.post('/playlist/downvote', data);
+  socket.emit('request downvote song', data);
 
-  promise.done(function(playlist) {
-    if (!playlist.error) {
-      callback(playlist);
-    } else {
-      console.log(playlist.error);
-      callback();
-    }
-  });
+  // var promise = $.post('/playlist/downvote', data);
 
-  promise.fail(function(err) {
-    console.log(err);
-    callback(false);
-  });
+  // promise.done(function(playlist) {
+  //   if (!playlist.error) {
+  //     callback(playlist);
+  //   } else {
+  //     console.log(playlist.error);
+  //     callback();
+  //   }
+  // });
+
+  // promise.fail(function(err) {
+  //   console.log(err);
+  //   callback(false);
+  // });
 }
 
 function parsePlaylist(playlist) {
@@ -271,10 +275,7 @@ AppDispatcher.register(function(action) {
       break;
 
     case PlaylistConstants.UPVOTE:
-      upvoteSong(action.songId, function(playlist) {
-        _playlist = playlist;
-        PlaylistStore.emitChange();
-      });
+      upvoteSong(action.songId);
       break;
 
     case PlaylistConstants.DOWNVOTE:
@@ -299,6 +300,16 @@ socket.on('next song return', function() {
 });
 
 socket.on('playlist return', function(data) {
+  _playlist = parsePlaylist(data);
+  PlaylistStore.emitChange();
+});
+
+socket.on('upvote song return', function(data) {
+  _playlist = parsePlaylist(data);
+  PlaylistStore.emitChange();
+});
+
+socket.on('downvote song return', function(data) {
   _playlist = parsePlaylist(data);
   PlaylistStore.emitChange();
 });
