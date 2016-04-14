@@ -44,6 +44,8 @@ module.exports = {
 		hashing.getUserKey(key, function(hash) {
 			if (hash !== '') {
 				self.createPlaylist(key, hash, function(err, reply) {
+					console.log("THIS IS THE HASH THAT IS GOING TO BE SET");
+					console.log(hash);
 					callback(err, reply, hash);
 				});
 			} else {

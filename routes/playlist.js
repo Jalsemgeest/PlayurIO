@@ -13,6 +13,8 @@ module.exports = function(client) {
 		var room = Helper.getRoomCookie(socket.handshake.headers.cookie);
 		var hash = Helper.getHashCookie(socket.handshake.headers.cookie);
 		var uuid = Helper.getUUID(socket.handshake.headers.cookie, room);
+		
+		console.log("UUID: " + uuid);
 		socket.join(room);
 
 		// Playlist request.
@@ -50,7 +52,7 @@ module.exports = function(client) {
 		socket.on('request upvote song', function(song) {
 			console.log(song);
 			console.log(socket.handshake.headers.cookie);
-
+			console.log("THIS IS THE UPVOTE!!!!!");
 			console.log(uuid);
 			if (uuid) {
 				Redis.getAllFromKey(room, function(err, reply) {

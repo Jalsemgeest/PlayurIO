@@ -1,12 +1,25 @@
-
+blue = #445878;
 darkColor = #585858;
 orange = #FF6300;
-
+grayLowLow = rgba(49, 53, 61, 0.3);
+grayLow = rgba(49, 53, 61, 0.85);
+whiteLow = rgba(255,255,255,0.8);
+gray = #31353D;
+specWhite = #EEEFF7;
 // -webkit-transition: 0.25s linear; -moz-transition: 0.25s linear; -o-transition: 0.25s linear; transition: 0.25s linear;
+@import url('http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700,300,400');
+@import url('http://fonts.googleapis.com/css?family=Titillium+Web:400,600');
+
+openSans = "Open Sans", sans-serif;
+titillium = "Titillium Web", sans-serif;
+
 
 body {
 	margin:0px;
 	// background-color:darkColor;
+	background: url('../images/background.png') no-repeat;
+	background-size: cover;
+	font-family:titillium;
 }
 
 .container {
@@ -17,7 +30,7 @@ body {
 	
 	.center-container {
 		display:table;
-		width:300px;
+		width:500px;
 		height:100%;
 		margin:auto;
 		
@@ -29,12 +42,64 @@ body {
 	}
 }
 
+.home_page {
+
+	.playur_logo {
+	    width: 75%;
+	    display: block;
+	    margin: auto;
+	}
+	
+	h3 {
+		text-align:center;
+	}
+	
+	.create_room, .join_room {
+		text-decoration:none;
+		width:100%;
+		background-color:gray;
+		color:specWhite;
+		display:block;
+		text-align:center;
+		height:30px;
+		line-height:30px;
+		margin:5px 0px;
+	}
+	
+	.create_room:hover, .join_room:hover {
+		background-color:orange;
+		color:specWhite;
+		-webkit-transition: 0.25s linear; -moz-transition: 0.25s linear; -o-transition: 0.25s linear; transition: 0.25s linear;
+	}
+	
+	// .join_room {
+	// 	text-decoration:none;
+		
+	// }
+	
+	input.join_room_input {
+		border:0px;
+		height:30px;
+		line-height:30px;
+		text-indent:5px;
+		font-size:20px;
+		width:100%;
+		border-bottom:2px solid gray;
+		outline:0;
+		padding:0;
+	}
+	
+	input.join_room_input:focus {
+		outline:0;
+	}
+}
+
 .dashboard {
 	width:100%;
 	height:100%;
 	position:absolute;
 	
-	.video-area {
+	.video_area {
 		display:inline-block;
 		float:left;
 		width:60%;
@@ -42,15 +107,16 @@ body {
 		height:100%;
 	}
 	
-	.menu-area {
+	.menu_area {
 		display:inline-block;
 		float:left;
 		width:40%;
 		position:relative;
 		height:100%;
+		background-color:white-low;
 	}
 	
-	.menu-area.guest {
+	.menu_area.guest {
 		width:80%;
 		margin:auto;
 		float:none;
@@ -58,7 +124,7 @@ body {
 		border:1px solid darkColor;
 		border-top:0;
 		border-bottom:0;
-		
+		background-color:white-low;
 	}
 	
 
@@ -76,22 +142,39 @@ body {
     	height:500px;
     	vertical-align:middle;
     	
+		.playur_logo {
+		    width: 50%;
+		    margin: auto;
+		    display: block;
+		}
+
+		.room_code_wrapper {
+			margin:0;
+			text-align:center;
+			.room_code {
+				color:orange;
+			}
+			padding-bottom:20px;
+		}
+
     	a.next_button {
 		    width: 100%;
 		    display: block;
 		    text-align: center;
 		    text-decoration: none;
-		    color: black;
-		    background-color:orange;
 		    position:relative;
-		    top:-4px;
+		    height: 30px;
+    		line-height: 30px
+    		background-color:gray;
+    		color:specWhite;
     	}
     	a:hover {
 			-webkit-transition: 0.25s linear; -moz-transition: 0.25s linear; -o-transition: 0.25s linear; transition: 0.25s linear;
 			background-color: rgba(255, 99, 0, 0.8);
 		    transform: translate(0px, -0.5px);
 		    box-shadow: 1px 4px 3px -2px rgba(0, 0, 0, 0.47);
-		    color: black;
+		    color: specWhite;
+		    background-color:orange;
 		}
     }
 }
@@ -99,6 +182,7 @@ body {
 .main_menu {
 	width:90%;
 	height:100%;
+	margin:auto;
 	ul.menu_tabs {
 		list-style:none;
 		padding:0;
@@ -109,16 +193,19 @@ body {
 		li {
 			display:inline-block;
 			width:calc(100% / 3);
-			height:50px;
+			height:50px;			
 			a {
 				text-decoration:none;
 				color:black;
 				line-height:50px;
 				text-align:center;
 				display:block;
+				background-color:gray;
+				color:specWhite;
 			}
 			a.selected {
-				background-color:gray;
+				background-color:orange;
+				color:specWhite;
 			}
 		}
 	}
@@ -131,15 +218,21 @@ body {
 			height:100%;
 			width:100%;
 			
-			input {
+			input.youtube_search {
 				width:100%;
 				height:20px;
+			    border: 0px;
+				margin-top: 5px;
+				height: 30px;
+				line-height: 30px;
+				font-size: 20px;
+				text-indent:5px;
 			}
-			input:focus {
+			input.youtube_search:focus {
 				outline:0;
 			}
 
-			.youtubeResults, .playlist {
+			.youtubeResults, .playlist, .history {
 				
 				height:calc(100% - 20px);
 				overflow-y:scroll;
@@ -148,11 +241,21 @@ body {
 					margin:0;
 					list-style:none;
 					padding:0;
+					li:first-child {
+						margin-top:15px;
+					}
 					li {
 						height:100px;
 						display:block;
 						position:relative;
 						margin-bottom:10px;
+						color:white;
+						// background-color: rgb(49, 53, 61);
+					 //    box-shadow: 0px 4px 4px 0px rgba(49, 53, 61, 0.5);
+					 //    border:1px solid gray;
+					    background-color: #EAEAEA;
+					    box-shadow: 0px 4px 4px 0px rgba(49,53,61,0.5);
+					    border: 1px solid #EAEAEA;
 						.image_box {
 							width:30%;
 							display:inline-block;
@@ -175,6 +278,14 @@ body {
 								margin: 0;
 								padding:5px;
 								width:100%;
+								overflow:hidden;
+                                text-overflow:ellipsis;
+                                white-space:nowrap;
+                                color:gray;
+							}
+							p::after {
+								display:block;
+								content:'';
 							}
 							a {
 								position: absolute;
@@ -182,16 +293,20 @@ body {
 							    width:100%;
 							    left: 0px;
 							    text-align: center;
-							    color:black;
-							    background-color:orange;
+							    background-color:gray;
+    							color:specWhite;
 							    text-decoration:none;
+							    // background-color:#BFBFBF;
+							    // color: gray;
 							}
 							a:hover {
 								-webkit-transition: 0.25s linear; -moz-transition: 0.25s linear; -o-transition: 0.25s linear; transition: 0.25s linear;
 								background-color: rgba(255, 99, 0, 0.8);
 							    transform: translate(0px, -0.5px);
 							    box-shadow: 1px 4px 3px -2px rgba(0, 0, 0, 0.47);
-							    color: black;
+							    color:white;
+							    background-color:orange;
+							   	
 							}
 							a.upVote {
 								width:50%;
@@ -201,6 +316,7 @@ body {
 								width:50%;
 								right:0px;
 								left:initial;
+								border-left:1px solid gray;
 							}
 						}
 					}
@@ -209,6 +325,11 @@ body {
 		}
 	}
 }
+
+.playlist {
+	height:100%;
+}
+
 
 .menu-area.guest {
 	.main_menu {

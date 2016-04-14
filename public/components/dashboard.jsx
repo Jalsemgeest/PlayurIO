@@ -37,11 +37,11 @@ var Dashboard = React.createClass({
 
 		var hosting = null;
 		if (this.state.isHost) {
-			hosting = (<div className="video-area">
+			hosting = (<div className="video_area">
 						<VideoPlayur />
 					</div>);
 		}
-		var menuClass = this.state.isHost ? 'menu-area' : 'menu-area guest';
+		var menuClass = this.state.isHost ? 'menu_area' : 'menu_area guest';
 		return (
 				<div className="dashboard">
 					{hosting}

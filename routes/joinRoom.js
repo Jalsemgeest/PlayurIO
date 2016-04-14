@@ -36,6 +36,7 @@ router.get('/joinRoom', function(req, res, next) {
 						console.log(res.cookies);
 
 						if (!req.cookies[key+'-Voting']) {
+							console.log("Does this happen?");
 							res.cookie(key+'-Voting', Auth.getUserUUID(), { maxAge: 86400000, httpOnly: true });
 						}
 						res.redirect("/room/"+key);

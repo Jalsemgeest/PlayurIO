@@ -1,5 +1,10 @@
+@import url("http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700,300,400");
+@import url("http://fonts.googleapis.com/css?family=Titillium+Web:400,600");
 body {
   margin: 0px;
+  background: url("../images/background.png") no-repeat;
+  background-size: cover;
+  font-family: "Titillium Web", sans-serif;
 }
 .container {
   width: 100%;
@@ -9,7 +14,7 @@ body {
 }
 .container .center-container {
   display: table;
-  width: 300px;
+  width: 500px;
   height: 100%;
   margin: auto;
 }
@@ -18,26 +23,70 @@ body {
   height: 300px;
   vertical-align: middle;
 }
+.home_page .playur_logo {
+  width: 75%;
+  display: block;
+  margin: auto;
+}
+.home_page h3 {
+  text-align: center;
+}
+.home_page .create_room,
+.home_page .join_room {
+  text-decoration: none;
+  width: 100%;
+  background-color: #31353d;
+  color: #eeeff7;
+  display: block;
+  text-align: center;
+  height: 30px;
+  line-height: 30px;
+  margin: 5px 0px;
+}
+.home_page .create_room:hover,
+.home_page .join_room:hover {
+  background-color: #ff6300;
+  color: #eeeff7;
+  -webkit-transition: 0.25s linear;
+  -moz-transition: 0.25s linear;
+  -o-transition: 0.25s linear;
+  transition: 0.25s linear;
+}
+.home_page input.join_room_input {
+  border: 0px;
+  height: 30px;
+  line-height: 30px;
+  text-indent: 5px;
+  font-size: 20px;
+  width: 100%;
+  border-bottom: 2px solid #31353d;
+  outline: 0;
+  padding: 0;
+}
+.home_page input.join_room_input:focus {
+  outline: 0;
+}
 .dashboard {
   width: 100%;
   height: 100%;
   position: absolute;
 }
-.dashboard .video-area {
+.dashboard .video_area {
   display: inline-block;
   float: left;
   width: 60%;
   position: relative;
   height: 100%;
 }
-.dashboard .menu-area {
+.dashboard .menu_area {
   display: inline-block;
   float: left;
   width: 40%;
   position: relative;
   height: 100%;
+  background-color: white-low;
 }
-.dashboard .menu-area.guest {
+.dashboard .menu_area.guest {
   width: 80%;
   margin: auto;
   float: none;
@@ -45,6 +94,7 @@ body {
   border: 1px solid #585858;
   border-top: 0;
   border-bottom: 0;
+  background-color: white-low;
 }
 .video-table {
   display: table;
@@ -57,15 +107,29 @@ body {
   height: 500px;
   vertical-align: middle;
 }
+.video-table .video-container .playur_logo {
+  width: 50%;
+  margin: auto;
+  display: block;
+}
+.video-table .video-container .room_code_wrapper {
+  margin: 0;
+  text-align: center;
+  padding-bottom: 20px;
+}
+.video-table .video-container .room_code_wrapper .room_code {
+  color: #ff6300;
+}
 .video-table .video-container a.next_button {
   width: 100%;
   display: block;
   text-align: center;
   text-decoration: none;
-  color: #000;
-  background-color: #ff6300;
   position: relative;
-  top: -4px;
+  height: 30px;
+  line-height: 30px;
+  background-color: #31353d;
+  color: #eeeff7;
 }
 .video-table .video-container a:hover {
   -webkit-transition: 0.25s linear;
@@ -75,11 +139,13 @@ body {
   background-color: rgba(255,99,0,0.8);
   transform: translate(0px, -0.5px);
   box-shadow: 1px 4px 3px -2px rgba(0,0,0,0.47);
-  color: #000;
+  color: #eeeff7;
+  background-color: #ff6300;
 }
 .main_menu {
   width: 90%;
   height: 100%;
+  margin: auto;
 }
 .main_menu ul.menu_tabs {
   list-style: none;
@@ -99,9 +165,12 @@ body {
   line-height: 50px;
   text-align: center;
   display: block;
+  background-color: #31353d;
+  color: #eeeff7;
 }
 .main_menu ul.menu_tabs li a.selected {
-  background-color: #808080;
+  background-color: #ff6300;
+  color: #eeeff7;
 }
 .main_menu .menu_container {
   width: 100%;
@@ -111,45 +180,66 @@ body {
   height: 100%;
   width: 100%;
 }
-.main_menu .menu_container .menu_content input {
+.main_menu .menu_container .menu_content input.youtube_search {
   width: 100%;
   height: 20px;
+  border: 0px;
+  margin-top: 5px;
+  height: 30px;
+  line-height: 30px;
+  font-size: 20px;
+  text-indent: 5px;
 }
-.main_menu .menu_container .menu_content input:focus {
+.main_menu .menu_container .menu_content input.youtube_search:focus {
   outline: 0;
 }
 .main_menu .menu_container .menu_content .youtubeResults,
-.main_menu .menu_container .menu_content .playlist {
+.main_menu .menu_container .menu_content .playlist,
+.main_menu .menu_container .menu_content .history {
   height: calc(100% - 20px);
   overflow-y: scroll;
 }
 .main_menu .menu_container .menu_content .youtubeResults ul,
-.main_menu .menu_container .menu_content .playlist ul {
+.main_menu .menu_container .menu_content .playlist ul,
+.main_menu .menu_container .menu_content .history ul {
   margin: 0;
   list-style: none;
   padding: 0;
 }
+.main_menu .menu_container .menu_content .youtubeResults ul li:first-child,
+.main_menu .menu_container .menu_content .playlist ul li:first-child,
+.main_menu .menu_container .menu_content .history ul li:first-child {
+  margin-top: 15px;
+}
 .main_menu .menu_container .menu_content .youtubeResults ul li,
-.main_menu .menu_container .menu_content .playlist ul li {
+.main_menu .menu_container .menu_content .playlist ul li,
+.main_menu .menu_container .menu_content .history ul li {
   height: 100px;
   display: block;
   position: relative;
   margin-bottom: 10px;
+  color: #fff;
+  background-color: #eaeaea;
+  box-shadow: 0px 4px 4px 0px rgba(49,53,61,0.5);
+  border: 1px solid #eaeaea;
 }
 .main_menu .menu_container .menu_content .youtubeResults ul li .image_box,
-.main_menu .menu_container .menu_content .playlist ul li .image_box {
+.main_menu .menu_container .menu_content .playlist ul li .image_box,
+.main_menu .menu_container .menu_content .history ul li .image_box {
   width: 30%;
   display: inline-block;
   float: left;
   height: 100px;
 }
 .main_menu .menu_container .menu_content .youtubeResults ul li .image_box img,
-.main_menu .menu_container .menu_content .playlist ul li .image_box img {
+.main_menu .menu_container .menu_content .playlist ul li .image_box img,
+.main_menu .menu_container .menu_content .history ul li .image_box img {
   width: 100%;
   height: 100%;
 }
 .main_menu .menu_container .menu_content .youtubeResults ul li .text_box,
-.main_menu .menu_container .menu_content .playlist ul li .text_box {
+.main_menu .menu_container .menu_content .playlist ul li .text_box,
+.main_menu .menu_container .menu_content .history ul li .text_box {
   width: 70%;
   display: inline-block;
   float: left;
@@ -157,26 +247,39 @@ body {
   position: relative;
 }
 .main_menu .menu_container .menu_content .youtubeResults ul li .text_box p,
-.main_menu .menu_container .menu_content .playlist ul li .text_box p {
+.main_menu .menu_container .menu_content .playlist ul li .text_box p,
+.main_menu .menu_container .menu_content .history ul li .text_box p {
   display: inline-block;
   float: left;
   margin: 0;
   padding: 5px;
   width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #31353d;
+}
+.main_menu .menu_container .menu_content .youtubeResults ul li .text_box p::after,
+.main_menu .menu_container .menu_content .playlist ul li .text_box p::after,
+.main_menu .menu_container .menu_content .history ul li .text_box p::after {
+  display: block;
+  content: '';
 }
 .main_menu .menu_container .menu_content .youtubeResults ul li .text_box a,
-.main_menu .menu_container .menu_content .playlist ul li .text_box a {
+.main_menu .menu_container .menu_content .playlist ul li .text_box a,
+.main_menu .menu_container .menu_content .history ul li .text_box a {
   position: absolute;
   bottom: 0px;
   width: 100%;
   left: 0px;
   text-align: center;
-  color: #000;
-  background-color: #ff6300;
+  background-color: #31353d;
+  color: #eeeff7;
   text-decoration: none;
 }
 .main_menu .menu_container .menu_content .youtubeResults ul li .text_box a:hover,
-.main_menu .menu_container .menu_content .playlist ul li .text_box a:hover {
+.main_menu .menu_container .menu_content .playlist ul li .text_box a:hover,
+.main_menu .menu_container .menu_content .history ul li .text_box a:hover {
   -webkit-transition: 0.25s linear;
   -moz-transition: 0.25s linear;
   -o-transition: 0.25s linear;
@@ -184,18 +287,25 @@ body {
   background-color: rgba(255,99,0,0.8);
   transform: translate(0px, -0.5px);
   box-shadow: 1px 4px 3px -2px rgba(0,0,0,0.47);
-  color: #000;
+  color: #fff;
+  background-color: #ff6300;
 }
 .main_menu .menu_container .menu_content .youtubeResults ul li .text_box a.upVote,
-.main_menu .menu_container .menu_content .playlist ul li .text_box a.upVote {
+.main_menu .menu_container .menu_content .playlist ul li .text_box a.upVote,
+.main_menu .menu_container .menu_content .history ul li .text_box a.upVote {
   width: 50%;
   left: 0px;
 }
 .main_menu .menu_container .menu_content .youtubeResults ul li .text_box a.downVote,
-.main_menu .menu_container .menu_content .playlist ul li .text_box a.downVote {
+.main_menu .menu_container .menu_content .playlist ul li .text_box a.downVote,
+.main_menu .menu_container .menu_content .history ul li .text_box a.downVote {
   width: 50%;
   right: 0px;
   left: initial;
+  border-left: 1px solid #31353d;
+}
+.playlist {
+  height: 100%;
 }
 .menu-area.guest .main_menu {
   width: 100%;

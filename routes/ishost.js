@@ -17,15 +17,23 @@ router.use(bodyParser());
 
 router.get('/isHost', function(req, res, next) {
 	var isHost = req.cookies.roomHash ||  '';
-	if (isHost !== '') {
-		res.send({
-			hosting:true
-		});
-	} else {
-		res.send({
-			hosting:false
-		});
-	}
+	var roomName = req.cookies.roomName || '';
+	console.log("THIS IS THE HASH SET IN COOKIE:");
+	console.log(isHost);
+	console.log(roomName);
+	Auth.verifyHash(isHost, roomName, function(isValid) {
+		console.log(isValid);
+		if (isValid) {
+			res.send({
+				hosting:true
+			});
+		} else {
+			res.send({
+				hosting:false
+			});
+		}
+	});
+	
 	
 });
 return router;

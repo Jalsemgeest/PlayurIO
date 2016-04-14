@@ -108,9 +108,28 @@ var VideoPlayur = React.createClass({
 				}
 			}
 		}
+		var roomCode = window.location.href;
+		if (roomCode) {
+			roomCode = roomCode.split('/');
+			if (roomCode.length > 3) {
+				roomCode = roomCode[4];
+				if (roomCode.indexOf('?') !== -1) {
+					var index = roomCode.indexOf('?');
+					roomCode = roomCode.substring(0, index);
+				}
+			} else {
+				roomCode = null;
+			}
+		}
+		var roomInfo = null;
+		if (roomCode) {
+			roomInfo = <p className="room_code_wrapper">Room Code:<span className="room_code"> {roomCode}</span></p>;
+		}
 		return (
 				<div className="video-table">
 					<div className="video-container">
+						<img className="playur_logo" src="../images/logo.png"/>
+						{roomInfo}
 						<div id="player"></div>
 						<a className="next_button" href="#" onClick={this.goToNextSong}>Next Song</a>
 					</div>

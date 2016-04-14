@@ -12,9 +12,12 @@ var CreateOrJoin = React.createClass({
 	render: function() {
 		return (
 				<div>
-					<a href="/createRoom" >Create Room</a>
-					<input value={this.state.joiningKey} onChange={this.enteredKey} type="text"/>
-					<a href={"/joinRoom?key="+ this.state.joiningKey} >Join Room</a>
+					<p>Playur allows you to create a YouTube playlist that other people can add to!</p>
+					<p>Just create a room and give your friends the <i>key</i> and they can join!</p>
+					<a className="create_room" href="/createRoom" >Create Room</a>
+					<p>Or join a room with a friends key!</p>
+					<input className="join_room_input" value={this.state.joiningKey} onChange={this.enteredKey} type="text"/>
+					<a className="join_room" href={"/joinRoom?key="+ this.state.joiningKey} >Join Room</a>
 				</div>
 			)
 	}

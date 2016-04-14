@@ -12,6 +12,12 @@ function getTabs() {
 		]
 }
 
+var constants = {
+	"playlist":"Playlist",
+	"youtube":"YouTube",
+	"history":"History"
+};
+
 var MenuArea = React.createClass({
 	displayName:'MenuArea',
 	getInitialState: function() {
@@ -41,7 +47,8 @@ var MenuArea = React.createClass({
 			if (self.state && self.state.tab === val || (self.props.tab === val && !self.state.tab)) {
 				isSelected = "selected";
 			}
-			return (<li key={val} id={val} ><a className={isSelected} ref={val} href="#" onClick={self.changeTab} >{val}</a></li>)
+			var title = constants[val];
+			return (<li key={val} id={val} ><a className={isSelected} ref={val} href="#" onClick={self.changeTab} >{title}</a></li>)
 		});
 		var selectedTab = this.props.tab;
 		if (this.state && this.state.tab) {

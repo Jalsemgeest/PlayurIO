@@ -65,20 +65,25 @@ router.get('/createRoom', function(req, res, next) {
 	// console.log(router);
 	// res.sendFile(path.join(__dirname + '/../views/create.html'));
 	// console.log(req.params.roomKey);
-	console.log("HERE?");
+	// console.log("HERE?");
 	var key = getKey();
-	console.log("KEY: " + key);
-	key = 'SouthInterestFinal';
+	// console.log("KEY: " + key);
+	// key = 'SouthInterestFinal';
 	attemptCreate(key, function(data) {
 		// console.log(data);
 		// console.log(req.cookies);
-		console.log("COOKIE");
-		console.log(data.hash);
-		if (!req.cookies[key+'-Voting']) {
-			res.cookie(key+'-Voting', Auth.getUserUUID(), { maxAge: 86400000, httpOnly: true });
+		// console.log("COOKIE");
+		// console.log(data.hash);
+		// console.log("COOKIES!");
+		// console.log(req.cookies);
+		// console.log("--------------------------------------------");
+		// console.log(req.cookies[data.key+'-Voting']);
+		// console.log("--------------------------------------------");
+		if (!req.cookies[data.key+'-Voting']) {
+			res.cookie(data.key+'-Voting', Auth.getUserUUID(), { maxAge: 86400000, httpOnly: true });
 		}
 		res.cookie('roomHash', data.hash, { maxAge: 86400000, httpOnly: true });
-		console.log("/room/"+data.key+"?auth=" + data.hash);
+		// console.log("/room/"+data.key+"?auth=" + data.hash);
 		res.redirect("/room/"+data.key+"?auth=" + data.hash);
 		// next();
 	});

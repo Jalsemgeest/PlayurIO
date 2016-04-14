@@ -44,7 +44,6 @@ var History = React.createClass({
 		return (
 				<div>
 					<div style={isVisible} className="menu_content">
-						<p>Playlist</p>
 						<div className="playlist">
 							<ul>
 								{playlist}

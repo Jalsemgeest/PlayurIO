@@ -1410,9 +1410,12 @@ var CreateOrJoin = React.createClass({
 	render: function() {
 		return (
 				React.createElement("div", null, 
-					React.createElement("a", {href: "/createRoom"}, "Create Room"), 
-					React.createElement("input", {value: this.state.joiningKey, onChange: this.enteredKey, type: "text"}), 
-					React.createElement("a", {href: "/joinRoom?key="+ this.state.joiningKey}, "Join Room")
+					React.createElement("p", null, "Playur allows you to create a YouTube playlist that other people can add to!"), 
+					React.createElement("p", null, "Just create a room and give your friends the ", React.createElement("i", null, "key"), " and they can join!"), 
+					React.createElement("a", {className: "create_room", href: "/createRoom"}, "Create Room"), 
+					React.createElement("p", null, "Or join a room with a friends key!"), 
+					React.createElement("input", {className: "join_room_input", value: this.state.joiningKey, onChange: this.enteredKey, type: "text"}), 
+					React.createElement("a", {className: "join_room", href: "/joinRoom?key="+ this.state.joiningKey}, "Join Room")
 				)
 			)
 	}
@@ -1455,11 +1458,11 @@ var HelloWorld = React.createClass({
     		React.createElement("div", {className: "container"}, 
     			React.createElement("div", {className: "center-container"}, 
     				React.createElement("div", {className: "center-container-content"}, 
-						React.createElement("h3", null, "Welcome to Playur!"), 
-						React.createElement("p", null, "Playur allows you to create a YouTube playlist that other people can add to!"), 
-						React.createElement("p", null, "Just create a room and give your friends the ", React.createElement("i", null, "key"), " and they can join!"), 
-						React.createElement("p", null, "Or join a room with a friends key!"), 
-			        	React.createElement(CreateOrJoin, null)
+    					React.createElement("div", {className: "home_page"}, 
+	    					React.createElement("img", {className: "playur_logo", src: "images/logo.png"}), 
+							React.createElement("h3", null, "Welcome to Playur!"), 
+				        	React.createElement(CreateOrJoin, null)
+			        	)
 		        	)
 	        	)
         	)
@@ -1468,6 +1471,6 @@ var HelloWorld = React.createClass({
   }
 });
 
-React.render(React.createElement(HelloWorld, null), document.getElementById('app'));
-}).call(this,require("b55mWE"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/fake_15fba8af.js","/")
+ReactDOM.render(React.createElement(HelloWorld, null), document.getElementById('app'));
+}).call(this,require("b55mWE"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/fake_fdf28530.js","/")
 },{"b55mWE":3,"buffer":2}]},{},[5])

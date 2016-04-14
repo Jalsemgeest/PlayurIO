@@ -14,11 +14,11 @@ var HelloWorld = React.createClass({
     		<div className="container">
     			<div className="center-container">
     				<div className="center-container-content">
-						<h3>Welcome to Playur!</h3>
-						<p>Playur allows you to create a YouTube playlist that other people can add to!</p>
-						<p>Just create a room and give your friends the <i>key</i> and they can join!</p>
-						<p>Or join a room with a friends key!</p>
-			        	<CreateOrJoin />
+    					<div className="home_page">
+	    					<img className="playur_logo" src="images/logo.png"/>
+							<h3>Welcome to Playur!</h3>
+				        	<CreateOrJoin />
+			        	</div>
 		        	</div>
 	        	</div>
         	</div>
@@ -27,4 +27,4 @@ var HelloWorld = React.createClass({
   }
 });
 
-React.render(<HelloWorld />, document.getElementById('app'));
+ReactDOM.render(<HelloWorld />, document.getElementById('app'));

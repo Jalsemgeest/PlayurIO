@@ -73,7 +73,7 @@ var YouTubeSearch = React.createClass({
 		}
 		return (
 				<div style={isVisible} className="menu_content">
-					<input type="text" 
+					<input className="youtube_search" type="text" 
 						value={this.state.search} 
 						onChange={this.searchChange} 
 						onKeyUp={this.searchYouTube} />

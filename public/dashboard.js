@@ -2246,7 +2246,6 @@ var History = React.createClass({
 		return (
 				React.createElement("div", null, 
 					React.createElement("div", {style: isVisible, className: "menu_content"}, 
-						React.createElement("p", null, "Playlist"), 
 						React.createElement("div", {className: "playlist"}, 
 							React.createElement("ul", null, 
 								playlist
@@ -2317,7 +2316,6 @@ var Playlist = React.createClass({
 		return (
 				React.createElement("div", null, 
 					React.createElement("div", {style: isVisible, className: "menu_content"}, 
-						React.createElement("p", null, "Playlist"), 
 						React.createElement("div", {className: "playlist"}, 
 							React.createElement("ul", null, 
 								playlist
@@ -2403,7 +2401,7 @@ var YouTubeSearch = React.createClass({
 		}
 		return (
 				React.createElement("div", {style: isVisible, className: "menu_content"}, 
-					React.createElement("input", {type: "text", 
+					React.createElement("input", {className: "youtube_search", type: "text", 
 						value: this.state.search, 
 						onChange: this.searchChange, 
 						onKeyUp: this.searchYouTube}), 
@@ -2429,6 +2427,12 @@ function getTabs() {
 		"history"
 		]
 }
+
+var constants = {
+	"playlist":"Playlist",
+	"youtube":"YouTube",
+	"history":"History"
+};
 
 var MenuArea = React.createClass({
 	displayName:'MenuArea',
@@ -2459,7 +2463,8 @@ var MenuArea = React.createClass({
 			if (self.state && self.state.tab === val || (self.props.tab === val && !self.state.tab)) {
 				isSelected = "selected";
 			}
-			return (React.createElement("li", {key: val, id: val}, React.createElement("a", {className: isSelected, ref: val, href: "#", onClick: self.changeTab}, val)))
+			var title = constants[val];
+			return (React.createElement("li", {key: val, id: val}, React.createElement("a", {className: isSelected, ref: val, href: "#", onClick: self.changeTab}, title)))
 		});
 		var selectedTab = this.props.tab;
 		if (this.state && this.state.tab) {
@@ -2591,9 +2596,28 @@ var VideoPlayur = React.createClass({
 				}
 			}
 		}
+		var roomCode = window.location.href;
+		if (roomCode) {
+			roomCode = roomCode.split('/');
+			if (roomCode.length > 3) {
+				roomCode = roomCode[4];
+				if (roomCode.indexOf('?') !== -1) {
+					var index = roomCode.indexOf('?');
+					roomCode = roomCode.substring(0, index);
+				}
+			} else {
+				roomCode = null;
+			}
+		}
+		var roomInfo = null;
+		if (roomCode) {
+			roomInfo = React.createElement("p", {className: "room_code_wrapper"}, "Room Code:", React.createElement("span", {className: "room_code"}, " ", roomCode));
+		}
 		return (
 				React.createElement("div", {className: "video-table"}, 
 					React.createElement("div", {className: "video-container"}, 
+						React.createElement("img", {className: "playur_logo", src: "../images/logo.png"}), 
+						roomInfo, 
 						React.createElement("div", {id: "player"}), 
 						React.createElement("a", {className: "next_button", href: "#", onClick: this.goToNextSong}, "Next Song")
 					)
@@ -2640,11 +2664,11 @@ var Dashboard = React.createClass({
 
 		var hosting = null;
 		if (this.state.isHost) {
-			hosting = (React.createElement("div", {className: "video-area"}, 
+			hosting = (React.createElement("div", {className: "video_area"}, 
 						React.createElement(VideoPlayur, null)
 					));
 		}
-		var menuClass = this.state.isHost ? 'menu-area' : 'menu-area guest';
+		var menuClass = this.state.isHost ? 'menu_area' : 'menu_area guest';
 		return (
 				React.createElement("div", {className: "dashboard"}, 
 					hosting, 
@@ -2659,7 +2683,7 @@ var Dashboard = React.createClass({
 });
 
 ReactDOM.render(React.createElement(Dashboard, null), document.getElementById('app'));
-}).call(this,require("b55mWE"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/fake_514ee285.js","/")
+}).call(this,require("b55mWE"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/fake_5363c1ca.js","/")
 },{"../actions/PlaylistActions":11,"../stores/PlaylistStore":15,"b55mWE":7,"buffer":5}],13:[function(require,module,exports){
 (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
 var keyMirror = require('keymirror');
