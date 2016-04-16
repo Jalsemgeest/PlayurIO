@@ -1,4 +1,13 @@
 var redis = require('redis');
+// var AWS = require('aws-sdk');
+
+// AWS.config.update({
+//   region: "us-west-2",
+//   endpoint: "http://localhost:8000"
+// });
+
+// var docClient = new AWS.DynamoDB.DocumentClient();
+
 var hashing = require('./Auth');
 module.exports = {
 

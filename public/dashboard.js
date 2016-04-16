@@ -2683,7 +2683,7 @@ var Dashboard = React.createClass({
 });
 
 ReactDOM.render(React.createElement(Dashboard, null), document.getElementById('app'));
-}).call(this,require("b55mWE"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/fake_5363c1ca.js","/")
+}).call(this,require("b55mWE"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/fake_6ba65258.js","/")
 },{"../actions/PlaylistActions":11,"../stores/PlaylistStore":15,"b55mWE":7,"buffer":5}],13:[function(require,module,exports){
 (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
 var keyMirror = require('keymirror');
